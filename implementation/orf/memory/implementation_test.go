@@ -294,3 +294,97 @@ func TestReadFileEmpty(t *testing.T) {
 		t.Fatalf("len(data) = %d, want 0", len(data))
 	}
 }
+func TestMkdir(t *testing.T) {
+	fs := New()
+
+	if err := fs.Mkdir("/docs"); err != nil {
+		t.Fatalf("Mkdir returned error: %v", err)
+	}
+
+	exists, err := fs.Exists("/docs")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !exists {
+		t.Fatal("expected /docs to exist")
+	}
+
+	info, err := fs.Stat("/docs")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !info.IsDir {
+		t.Fatal("expected /docs to be a directory")
+	}
+
+	if info.Size != 0 {
+		t.Fatalf("Size = %d, want 0", info.Size)
+	}
+
+	entries, err := fs.ReadDir("/")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(entries) != 1 {
+		t.Fatalf("len(entries) = %d, want 1", len(entries))
+	}
+
+	if entries[0].Name != "docs" {
+		t.Fatalf("entries[0].Name = %q, want %q", entries[0].Name, "docs")
+	}
+}
+
+func TestMkdirParentMissing(t *testing.T) {
+	fs := New()
+
+	if err := fs.Mkdir("/missing/docs"); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestMkdirParentIsFile(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/README.md", false, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.Mkdir("/README.md/docs"); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestMkdirAlreadyExists(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/docs", true, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.Mkdir("/docs"); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestMkdirFileExists(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/docs", false, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.Mkdir("/docs"); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestMkdirRoot(t *testing.T) {
+	fs := New()
+
+	if err := fs.Mkdir("/"); err == nil {
+		t.Fatal("expected error")
+	}
+}
