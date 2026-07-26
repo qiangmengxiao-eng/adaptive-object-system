@@ -8,6 +8,14 @@ func TestNew(t *testing.T) {
 	if fs == nil {
 		t.Fatal("New returned nil")
 	}
+
+	if fs.root == nil {
+		t.Fatal("root is nil")
+	}
+
+	if !fs.root.isDir {
+		t.Fatal("root should be a directory")
+	}
 }
 
 func TestExists(t *testing.T) {
@@ -33,16 +41,53 @@ func TestExists(t *testing.T) {
 			path: "/docs",
 			want: false,
 		},
+		{
+			name: "relative path",
+			path: "docs",
+			want: false,
+		},
 	}
 
 	for _, tt := range tests {
-		got, err := fs.Exists(tt.path)
-		if err != nil {
-			t.Fatalf("Exists(%q) returned error: %v", tt.path, err)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := fs.Exists(tt.path)
+			if err != nil {
+				t.Fatalf("Exists(%q) returned error: %v", tt.path, err)
+			}
 
-		if got != tt.want {
-			t.Fatalf("Exists(%q) = %v, want %v", tt.path, got, tt.want)
-		}
+			if got != tt.want {
+				t.Fatalf("Exists(%q) = %v, want %v", tt.path, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestStatRoot(t *testing.T) {
+	fs := New()
+
+	info, err := fs.Stat("/")
+	if err != nil {
+		t.Fatalf("Stat returned error: %v", err)
+	}
+
+	if info.Path != "/" {
+		t.Fatalf("Path = %q, want %q", info.Path, "/")
+	}
+
+	if !info.IsDir {
+		t.Fatal("root should be a directory")
+	}
+
+	if info.Size != 0 {
+		t.Fatalf("Size = %d, want 0", info.Size)
+	}
+}
+
+func TestStatMissing(t *testing.T) {
+	fs := New()
+
+	_, err := fs.Stat("/missing")
+	if err == nil {
+		t.Fatal("expected error for missing path")
 	}
 }

@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"fmt"
 	"path"
 	"strings"
 
@@ -83,5 +84,19 @@ func (m *MemoryFS) ReadFile(path string) ([]byte, error) {
 
 // Stat returns file information.
 func (m *MemoryFS) Stat(path string) (filesystem.FileInfo, error) {
-	return filesystem.FileInfo{}, nil
+	n := m.find(path)
+	if n == nil {
+		return filesystem.FileInfo{}, fmt.Errorf("path does not exist: %s", path)
+	}
+
+	size := int64(len(n.data))
+	if n.isDir {
+		size = 0
+	}
+
+	return filesystem.FileInfo{
+		Path:  path,
+		Size:  size,
+		IsDir: n.isDir,
+	}, nil
 }
