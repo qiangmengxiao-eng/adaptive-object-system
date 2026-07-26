@@ -3,6 +3,7 @@ package memory
 import (
 	"fmt"
 	"path"
+	"sort"
 	"strings"
 
 	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/filesystem"
@@ -106,8 +107,31 @@ func (m *MemoryFS) Exists(path string) (bool, error) {
 }
 
 // ReadDir returns the directory entries under path.
-func (m *MemoryFS) ReadDir(path string) ([]filesystem.DirectoryEntry, error) {
-	return nil, nil
+func (m *MemoryFS) ReadDir(p string) ([]filesystem.DirectoryEntry, error) {
+	n := m.find(p)
+	if n == nil {
+		return nil, fmt.Errorf("path does not exist: %s", p)
+	}
+
+	if !n.isDir {
+		return nil, fmt.Errorf("path is not a directory: %s", p)
+	}
+
+	entries := make([]filesystem.DirectoryEntry, 0, len(n.children))
+
+	for _, child := range n.children {
+		entries = append(entries, filesystem.DirectoryEntry{
+			Name:        child.name,
+			Path:        path.Join(p, child.name),
+			IsDirectory: child.isDir,
+		})
+	}
+
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].Name < entries[j].Name
+	})
+
+	return entries, nil
 }
 
 // ReadFile reads a file.

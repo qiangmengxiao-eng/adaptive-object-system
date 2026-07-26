@@ -26,26 +26,10 @@ func TestExists(t *testing.T) {
 		path string
 		want bool
 	}{
-		{
-			name: "root exists",
-			path: "/",
-			want: true,
-		},
-		{
-			name: "missing file",
-			path: "/README.md",
-			want: false,
-		},
-		{
-			name: "missing directory",
-			path: "/docs",
-			want: false,
-		},
-		{
-			name: "relative path",
-			path: "docs",
-			want: false,
-		},
+		{"root exists", "/", true},
+		{"missing file", "/README.md", false},
+		{"missing directory", "/docs", false},
+		{"relative path", "docs", false},
 	}
 
 	for _, tt := range tests {
@@ -123,5 +107,105 @@ func TestAddNode(t *testing.T) {
 
 	if info.Size != 5 {
 		t.Fatalf("Size = %d, want 5", info.Size)
+	}
+}
+
+func TestReadDir(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/README.md", false, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.addNode("/docs", true, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.addNode("/LICENSE", false, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	entries, err := fs.ReadDir("/")
+	if err != nil {
+		t.Fatalf("ReadDir returned error: %v", err)
+	}
+
+	if len(entries) != 3 {
+		t.Fatalf("len(entries) = %d, want 3", len(entries))
+	}
+
+	want := []struct {
+		name        string
+		path        string
+		isDirectory bool
+	}{
+		{"LICENSE", "/LICENSE", false},
+		{"README.md", "/README.md", false},
+		{"docs", "/docs", true},
+	}
+
+	for i := range want {
+		if entries[i].Name != want[i].name {
+			t.Fatalf("entries[%d].Name = %q, want %q",
+				i,
+				entries[i].Name,
+				want[i].name,
+			)
+		}
+
+		if entries[i].Path != want[i].path {
+			t.Fatalf("entries[%d].Path = %q, want %q",
+				i,
+				entries[i].Path,
+				want[i].path,
+			)
+		}
+
+		if entries[i].IsDirectory != want[i].isDirectory {
+			t.Fatalf("entries[%d].IsDirectory = %v, want %v",
+				i,
+				entries[i].IsDirectory,
+				want[i].isDirectory,
+			)
+		}
+	}
+}
+
+func TestReadDirEmpty(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/docs", true, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	entries, err := fs.ReadDir("/docs")
+	if err != nil {
+		t.Fatalf("ReadDir returned error: %v", err)
+	}
+
+	if len(entries) != 0 {
+		t.Fatalf("len(entries) = %d, want 0", len(entries))
+	}
+}
+
+func TestReadDirMissing(t *testing.T) {
+	fs := New()
+
+	_, err := fs.ReadDir("/missing")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestReadDirFile(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/README.md", false, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := fs.ReadDir("/README.md")
+	if err == nil {
+		t.Fatal("expected error")
 	}
 }
