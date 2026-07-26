@@ -1,6 +1,9 @@
 package memory
 
-import "testing"
+import (
+	"bytes"
+	"testing"
+)
 
 func TestNew(t *testing.T) {
 	fs := New()
@@ -207,5 +210,87 @@ func TestReadDirFile(t *testing.T) {
 	_, err := fs.ReadDir("/README.md")
 	if err == nil {
 		t.Fatal("expected error")
+	}
+}
+
+func TestReadFile(t *testing.T) {
+	fs := New()
+
+	content := []byte("hello world")
+
+	if err := fs.addNode("/hello.txt", false, content); err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := fs.ReadFile("/hello.txt")
+	if err != nil {
+		t.Fatalf("ReadFile returned error: %v", err)
+	}
+
+	if !bytes.Equal(data, content) {
+		t.Fatalf("ReadFile = %q, want %q", data, content)
+	}
+}
+
+func TestReadFileMissing(t *testing.T) {
+	fs := New()
+
+	_, err := fs.ReadFile("/missing.txt")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestReadFileDirectory(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/docs", true, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := fs.ReadFile("/docs")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestReadFileReturnsCopy(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/hello.txt", false, []byte("hello")); err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := fs.ReadFile("/hello.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data[0] = 'X'
+
+	again, err := fs.ReadFile("/hello.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(again) != "hello" {
+		t.Fatalf("expected stored data to remain %q, got %q", "hello", string(again))
+	}
+}
+
+func TestReadFileEmpty(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/empty.txt", false, []byte{}); err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := fs.ReadFile("/empty.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(data) != 0 {
+		t.Fatalf("len(data) = %d, want 0", len(data))
 	}
 }

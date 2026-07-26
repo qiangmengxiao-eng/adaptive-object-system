@@ -135,8 +135,20 @@ func (m *MemoryFS) ReadDir(p string) ([]filesystem.DirectoryEntry, error) {
 }
 
 // ReadFile reads a file.
-func (m *MemoryFS) ReadFile(path string) ([]byte, error) {
-	return nil, nil
+func (m *MemoryFS) ReadFile(p string) ([]byte, error) {
+	n := m.find(p)
+	if n == nil {
+		return nil, fmt.Errorf("path does not exist: %s", p)
+	}
+
+	if n.isDir {
+		return nil, fmt.Errorf("path is a directory: %s", p)
+	}
+
+	// Return a copy so callers cannot mutate the internal state.
+	data := append([]byte(nil), n.data...)
+
+	return data, nil
 }
 
 // Stat returns file information.
