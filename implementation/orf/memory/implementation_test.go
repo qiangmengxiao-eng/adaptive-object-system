@@ -91,3 +91,37 @@ func TestStatMissing(t *testing.T) {
 		t.Fatal("expected error for missing path")
 	}
 }
+
+func TestAddNode(t *testing.T) {
+	fs := New()
+
+	if err := fs.addNode("/docs", true, nil); err != nil {
+		t.Fatalf("addNode directory failed: %v", err)
+	}
+
+	if err := fs.addNode("/docs/api.md", false, []byte("hello")); err != nil {
+		t.Fatalf("addNode file failed: %v", err)
+	}
+
+	exists, err := fs.Exists("/docs/api.md")
+	if err != nil {
+		t.Fatalf("Exists returned error: %v", err)
+	}
+
+	if !exists {
+		t.Fatal("expected /docs/api.md to exist")
+	}
+
+	info, err := fs.Stat("/docs/api.md")
+	if err != nil {
+		t.Fatalf("Stat returned error: %v", err)
+	}
+
+	if info.IsDir {
+		t.Fatal("api.md should be a file")
+	}
+
+	if info.Size != 5 {
+		t.Fatalf("Size = %d, want 5", info.Size)
+	}
+}

@@ -16,11 +16,7 @@ type MemoryFS struct {
 // New creates a new empty in-memory filesystem.
 func New() *MemoryFS {
 	return &MemoryFS{
-		root: &node{
-			name:     "/",
-			isDir:    true,
-			children: make(map[string]*node),
-		},
+		root: newDirectory("/"),
 	}
 }
 
@@ -65,6 +61,43 @@ func (m *MemoryFS) find(p string) *node {
 	}
 
 	return current
+}
+
+// addNode creates a file or directory under an existing parent directory.
+func (m *MemoryFS) addNode(p string, isDir bool, data []byte) error {
+	if m == nil || m.root == nil {
+		return fmt.Errorf("filesystem is nil")
+	}
+
+	p = path.Clean(p)
+
+	if p == "/" {
+		return fmt.Errorf("cannot replace root")
+	}
+
+	parentPath := path.Dir(p)
+	name := path.Base(p)
+
+	parent := m.find(parentPath)
+	if parent == nil {
+		return fmt.Errorf("parent does not exist: %s", parentPath)
+	}
+
+	if !parent.isDir {
+		return fmt.Errorf("parent is not a directory: %s", parentPath)
+	}
+
+	if _, exists := parent.children[name]; exists {
+		return fmt.Errorf("path already exists: %s", p)
+	}
+
+	if isDir {
+		parent.children[name] = newDirectory(name)
+	} else {
+		parent.children[name] = newFile(name, data)
+	}
+
+	return nil
 }
 
 // Exists reports whether a path exists.
