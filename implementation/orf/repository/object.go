@@ -29,3 +29,16 @@ func (r *Repository) CreateObject(name string, definition []byte) error {
 
 	return r.fs.WriteFile(definitionPath, definition)
 }
+
+// ReadObject reads an object's definition file.
+func (r *Repository) ReadObject(name string) ([]byte, error) {
+	if r == nil || r.fs == nil {
+		return nil, fmt.Errorf("repository filesystem is nil")
+	}
+
+	objectPath := path.Join("/objects", name)
+
+	definitionPath := DefinitionPath(objectPath)
+
+	return r.fs.ReadFile(definitionPath)
+}
