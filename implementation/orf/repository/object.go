@@ -86,3 +86,14 @@ func (r *Repository) ListObjects() ([]string, error) {
 
 	return objects, nil
 }
+
+// ExistsObject reports whether an object exists.
+func (r *Repository) ExistsObject(name string) (bool, error) {
+	if r == nil || r.fs == nil {
+		return false, fmt.Errorf("repository filesystem is nil")
+	}
+
+	objectPath := path.Join("/objects", name)
+
+	return r.fs.Exists(objectPath)
+}
