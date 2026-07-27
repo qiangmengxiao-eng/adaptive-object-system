@@ -19,6 +19,8 @@ func main() {
 	}
 
 	switch args[0] {
+	case "version":
+		fmt.Println("adaptive-object-system v0.1.0")
 
 	case "object":
 		handleObject(system, args[1:])
@@ -70,6 +72,36 @@ func handleObject(system *repository.ObjectSystem, args []string) {
 		fmt.Printf("type: %s\n", object.Definition.Type)
 		fmt.Printf("version: %d\n", object.Metadata.Version)
 
+	case "inspect":
+		if len(args) < 2 {
+			fmt.Println("object name required")
+			return
+		}
+
+		object, err := system.Registry.Get(args[1])
+		if err != nil {
+			fmt.Println("error:", err)
+			return
+		}
+
+		fmt.Printf("Object: %s\n", object.Definition.Name)
+		fmt.Printf("Type: %s\n", object.Definition.Type)
+		fmt.Printf("Version: %d\n", object.Metadata.Version)
+
+	case "delete":
+		if len(args) < 2 {
+			fmt.Println("object name required")
+			return
+		}
+
+		err := system.Repository.DeleteObject(args[1])
+
+		if err != nil {
+			fmt.Println("error:", err)
+			return
+		}
+
+		fmt.Println("deleted object:", args[1])
 	case "create":
 		if len(args) < 2 {
 			fmt.Println("object name required")
