@@ -45,3 +45,33 @@ func TestRepositoryUsesMutableFS(t *testing.T) {
 		t.Fatal("expected /objects to exist")
 	}
 }
+func TestReadObject(t *testing.T) {
+	fs := memory.New()
+
+	repo := New(fs)
+
+	err := repo.CreateObject("user", []byte("name: user"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := repo.ReadObject("user")
+	if err != nil {
+		t.Fatalf("ReadObject returned error: %v", err)
+	}
+
+	if string(data) != "name: user" {
+		t.Fatalf("data = %q, want %q", string(data), "name: user")
+	}
+}
+
+func TestReadMissingObject(t *testing.T) {
+	fs := memory.New()
+
+	repo := New(fs)
+
+	_, err := repo.ReadObject("missing")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+}
