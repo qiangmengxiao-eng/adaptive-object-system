@@ -518,3 +518,85 @@ func TestWriteFileReturnsCopy(t *testing.T) {
 		t.Fatalf("content = %q, want %q", string(content), "hello")
 	}
 }
+func TestDeleteFile(t *testing.T) {
+	fs := New()
+
+	if err := fs.WriteFile("/hello.txt", []byte("hello")); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.Delete("/hello.txt"); err != nil {
+		t.Fatalf("Delete returned error: %v", err)
+	}
+
+	exists, err := fs.Exists("/hello.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if exists {
+		t.Fatal("expected file to be deleted")
+	}
+}
+
+func TestDeleteEmptyDirectory(t *testing.T) {
+	fs := New()
+
+	if err := fs.Mkdir("/docs"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.Delete("/docs"); err != nil {
+		t.Fatalf("Delete returned error: %v", err)
+	}
+
+	exists, err := fs.Exists("/docs")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if exists {
+		t.Fatal("expected directory to be deleted")
+	}
+}
+
+func TestDeleteMissing(t *testing.T) {
+	fs := New()
+
+	if err := fs.Delete("/missing"); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestDeleteRoot(t *testing.T) {
+	fs := New()
+
+	if err := fs.Delete("/"); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestDeleteNonEmptyDirectory(t *testing.T) {
+	fs := New()
+
+	if err := fs.Mkdir("/docs"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.WriteFile("/docs/readme.md", []byte("hello")); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.Delete("/docs"); err == nil {
+		t.Fatal("expected error")
+	}
+
+	exists, err := fs.Exists("/docs")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !exists {
+		t.Fatal("non-empty directory should remain")
+	}
+}

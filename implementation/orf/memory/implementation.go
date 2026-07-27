@@ -173,6 +173,44 @@ func (m *MemoryFS) WriteFile(p string, data []byte) error {
 	return nil
 }
 
+// Delete removes a file or an empty directory.
+func (m *MemoryFS) Delete(p string) error {
+	if m == nil || m.root == nil {
+		return fmt.Errorf("filesystem is nil")
+	}
+
+	p = path.Clean(p)
+
+	if p == "/" {
+		return fmt.Errorf("cannot delete root directory")
+	}
+
+	parentPath := path.Dir(p)
+	name := path.Base(p)
+
+	parent := m.find(parentPath)
+	if parent == nil {
+		return fmt.Errorf("parent does not exist: %s", parentPath)
+	}
+
+	if !parent.isDir {
+		return fmt.Errorf("parent is not a directory: %s", parentPath)
+	}
+
+	target, exists := parent.children[name]
+	if !exists {
+		return fmt.Errorf("path does not exist: %s", p)
+	}
+
+	if target.isDir && len(target.children) > 0 {
+		return fmt.Errorf("directory is not empty: %s", p)
+	}
+
+	delete(parent.children, name)
+
+	return nil
+}
+
 // Exists reports whether a path exists.
 func (m *MemoryFS) Exists(path string) (bool, error) {
 	return m.find(path) != nil, nil
