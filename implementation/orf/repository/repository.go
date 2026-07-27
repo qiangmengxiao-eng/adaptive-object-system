@@ -1,6 +1,11 @@
 package repository
 
-import "github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/filesystem"
+import (
+	"path"
+
+	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/filesystem"
+	"gopkg.in/yaml.v3"
+)
 
 // Repository represents an object repository backed by a filesystem.
 type Repository struct {
@@ -31,4 +36,30 @@ func (r *Repository) EnsureObjectsDirectory() error {
 	}
 
 	return r.fs.Mkdir("/objects")
+}
+
+// WriteObjectDefinition writes object definition.
+func (r *Repository) WriteObjectDefinition(
+	name string,
+	definition *ObjectDefinition,
+) error {
+
+	if err := definition.Prepare(); err != nil {
+		return err
+	}
+
+	data, err := yaml.Marshal(definition)
+
+	if err != nil {
+		return err
+	}
+
+	return r.fs.WriteFile(
+		path.Join(
+			"/objects",
+			name,
+			DefinitionFileName,
+		),
+		data,
+	)
 }

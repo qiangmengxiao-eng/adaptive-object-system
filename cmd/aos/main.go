@@ -8,8 +8,9 @@ import (
 	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository"
 )
 
+const version = "v0.1.0"
+
 func main() {
-	system := createSystem()
 
 	args := os.Args[1:]
 
@@ -18,167 +19,298 @@ func main() {
 		return
 	}
 
-	switch args[0] {
-	case "behavior":
-
-		if len(args) < 2 {
-			fmt.Println("usage: aos behavior <command>")
-			return
-		}
-
-		switch args[1] {
-
-		case "list":
-
-			fmt.Println(system.BehaviorService.List())
-
-		case "run":
-
-			if len(args) < 3 {
-				fmt.Println("behavior name required")
-				return
-			}
-
-			err := system.BehaviorService.Run(
-				args[2],
-				nil,
-			)
-
-			if err != nil {
-				fmt.Println("error:", err)
-				return
-			}
-
-			fmt.Println("executed behavior:", args[2])
-
-		default:
-
-			fmt.Println("unknown behavior command")
-		}
-	case "version":
-		fmt.Println("adaptive-object-system v0.1.0")
-
-	case "object":
-		handleObject(system, args[1:])
-
-	default:
-		fmt.Println("unknown command:", args[0])
-	}
-}
-
-func createSystem() *repository.ObjectSystem {
 	fs := filesystem.NewLocal("./data")
 
 	repo := repository.New(fs)
 
-	return repository.NewObjectSystem(repo)
+	system := repository.NewObjectSystem(repo)
+
+	switch args[0] {
+
+	case "version":
+
+		fmt.Println(
+			"adaptive-object-system",
+			version,
+		)
+
+	case "object":
+
+		handleObject(system, args[1:])
+
+	case "behavior":
+
+		handleBehavior(system, args[1:])
+
+	default:
+
+		fmt.Println(
+			"unknown command:",
+			args[0],
+		)
+	}
 }
 
-func handleObject(system *repository.ObjectSystem, args []string) {
+func handleObject(
+	system *repository.ObjectSystem,
+	args []string,
+) {
 
 	if len(args) == 0 {
-		fmt.Println("usage: aos object <command>")
+		fmt.Println(
+			"usage: aos object <command>",
+		)
 		return
 	}
 
 	switch args[0] {
 
 	case "list":
+
 		objects, err := system.Registry.List()
+
 		if err != nil {
-			fmt.Println("error:", err)
+			fmt.Println(
+				"error:",
+				err,
+			)
 			return
 		}
 
 		fmt.Println(objects)
-	case "search":
-		if len(args) < 2 {
-			fmt.Println("query required")
-			return
-		}
 
-		objects, err := system.Repository.QueryObjects(
-			repository.ObjectQuery{
-				Name: args[1],
-			},
-		)
-
-		if err != nil {
-			fmt.Println("error:", err)
-			return
-		}
-
-		fmt.Println(objects)
-	case "get":
-		if len(args) < 2 {
-			fmt.Println("object name required")
-			return
-		}
-
-		object, err := system.Registry.Get(args[1])
-		if err != nil {
-			fmt.Println("error:", err)
-			return
-		}
-
-		fmt.Printf("name: %s\n", object.Definition.Name)
-		fmt.Printf("type: %s\n", object.Definition.Type)
-		fmt.Printf("version: %d\n", object.Metadata.Version)
-
-	case "inspect":
-		if len(args) < 2 {
-			fmt.Println("object name required")
-			return
-		}
-
-		object, err := system.Registry.Get(args[1])
-		if err != nil {
-			fmt.Println("error:", err)
-			return
-		}
-
-		fmt.Printf("Object: %s\n", object.Definition.Name)
-		fmt.Printf("Type: %s\n", object.Definition.Type)
-		fmt.Printf("Version: %d\n", object.Metadata.Version)
-
-	case "delete":
-		if len(args) < 2 {
-			fmt.Println("object name required")
-			return
-		}
-
-		err := system.Repository.DeleteObject(args[1])
-
-		if err != nil {
-			fmt.Println("error:", err)
-			return
-		}
-
-		fmt.Println("deleted object:", args[1])
 	case "create":
+
 		if len(args) < 2 {
-			fmt.Println("object name required")
+			fmt.Println(
+				"object name required",
+			)
 			return
 		}
 
 		name := args[1]
 
+		definition := []byte(
+			"name: " + name + "\n" +
+				"type: object\n" +
+				"version: 1\n",
+		)
+
 		err := system.Registry.Register(
 			name,
-			[]byte("name: "+name),
+			definition,
 			&repository.ObjectMetadata{
 				Version: 1,
 			},
 		)
 
 		if err != nil {
-			fmt.Println("error:", err)
+			fmt.Println(
+				"error:",
+				err,
+			)
 			return
 		}
 
-		fmt.Println("created object:", name)
+		fmt.Println(
+			"created object:",
+			name,
+		)
+
+	case "get":
+
+		if len(args) < 2 {
+			fmt.Println(
+				"object name required",
+			)
+			return
+		}
+
+		object, err := system.Registry.Get(
+			args[1],
+		)
+
+		if err != nil {
+			fmt.Println(
+				"error:",
+				err,
+			)
+			return
+		}
+
+		fmt.Println(object)
+
+	case "inspect":
+
+		if len(args) < 2 {
+			fmt.Println(
+				"object name required",
+			)
+			return
+		}
+
+		definition, err :=
+			system.Repository.ReadObjectDefinition(
+				args[1],
+			)
+
+		if err != nil {
+			fmt.Println(
+				"error:",
+				err,
+			)
+			return
+		}
+
+		fmt.Println(
+			"Object:",
+			definition.Name,
+		)
+
+		fmt.Println(
+			"Type:",
+			definition.Type,
+		)
+
+		fmt.Println(
+			"Version:",
+			definition.Version,
+		)
+
+	case "delete":
+
+		if len(args) < 2 {
+			fmt.Println(
+				"object name required",
+			)
+			return
+		}
+
+		err := system.Repository.DeleteObject(
+			args[1],
+		)
+
+		if err != nil {
+			fmt.Println(
+				"error:",
+				err,
+			)
+			return
+		}
+
+		fmt.Println(
+			"deleted object:",
+			args[1],
+		)
+
+	case "migrate":
+
+		if len(args) < 2 {
+			fmt.Println(
+				"usage: aos object migrate <name>",
+			)
+			return
+		}
+
+		name := args[1]
+
+		definition, err :=
+			system.Repository.ReadObjectDefinition(
+				name,
+			)
+
+		if err != nil {
+			fmt.Println(
+				"error:",
+				err,
+			)
+			return
+		}
+
+		oldVersion := definition.Version
+
+		err = system.Repository.MigrateObject(
+			name,
+			system.MigrationService,
+			oldVersion+1,
+		)
+
+		if err != nil {
+			fmt.Println(
+				"error:",
+				err,
+			)
+			return
+		}
+
+		fmt.Printf(
+			"migrated object: %s %d -> %d\n",
+			name,
+			oldVersion,
+			oldVersion+1,
+		)
 
 	default:
-		fmt.Println("unknown object command:", args[0])
+
+		fmt.Println(
+			"unknown object command:",
+			args[0],
+		)
+	}
+}
+
+func handleBehavior(
+	system *repository.ObjectSystem,
+	args []string,
+) {
+
+	if len(args) == 0 {
+		fmt.Println(
+			"usage: aos behavior <command>",
+		)
+		return
+	}
+
+	switch args[0] {
+
+	case "list":
+
+		fmt.Println(
+			system.BehaviorService.List(),
+		)
+
+	case "run":
+
+		if len(args) < 2 {
+			fmt.Println(
+				"behavior name required",
+			)
+			return
+		}
+
+		err := system.BehaviorService.Run(
+			args[1],
+			nil,
+		)
+
+		if err != nil {
+			fmt.Println(
+				"error:",
+				err,
+			)
+			return
+		}
+
+		fmt.Println(
+			"executed behavior:",
+			args[1],
+		)
+
+	default:
+
+		fmt.Println(
+			"unknown behavior command:",
+			args[0],
+		)
 	}
 }
