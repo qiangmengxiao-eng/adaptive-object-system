@@ -134,3 +134,29 @@ func TestListObjects(t *testing.T) {
 		}
 	}
 }
+func TestReadObjectDefinitionPrepare(t *testing.T) {
+	fs := memory.New()
+
+	repo := New(fs)
+
+	definition := []byte(`
+name: " user "
+`)
+
+	if err := repo.CreateObject("user", definition); err != nil {
+		t.Fatal(err)
+	}
+
+	object, err := repo.ReadObjectDefinition("user")
+	if err != nil {
+		t.Fatalf("ReadObjectDefinition returned error: %v", err)
+	}
+
+	if object.Name != "user" {
+		t.Fatalf("Name = %q, want %q", object.Name, "user")
+	}
+
+	if object.Type != "object" {
+		t.Fatalf("Type = %q, want %q", object.Type, "object")
+	}
+}

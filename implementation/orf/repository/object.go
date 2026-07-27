@@ -113,5 +113,9 @@ func (r *Repository) ReadObjectDefinition(name string) (*ObjectDefinition, error
 		return nil, err
 	}
 
+	if err := definition.Prepare(); err != nil {
+		return nil, err
+	}
+
 	return &definition, nil
 }
