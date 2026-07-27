@@ -19,6 +19,10 @@ type ObjectSystem struct {
 	GraphStore *GraphStore
 
 	GraphService *GraphService
+
+	EventStore *EventStore
+
+	EventService *EventService
 }
 
 // NewObjectSystem creates an object system.
@@ -26,23 +30,41 @@ func NewObjectSystem(
 	repo *Repository,
 ) *ObjectSystem {
 
-	behavior := NewBehaviorEngine()
+	behavior :=
+		NewBehaviorEngine()
 
-	migration := NewMigrationEngine()
+	migration :=
+		NewMigrationEngine()
 
-	// default schema migration
-	_ = migration.Register(Migration{
-		FromVersion: 1,
-		ToVersion:   2,
-	})
+	behaviorService :=
+		NewBehaviorService(
+			behavior,
+		)
 
-	graphStore := NewGraphStore(
-		repo.FS(),
-	)
+	migrationService :=
+		NewMigrationService(
+			migration,
+		)
 
-	graphService := NewGraphService(
-		graphStore,
-	)
+	graphStore :=
+		NewGraphStore(
+			repo.FS(),
+		)
+
+	graphService :=
+		NewGraphService(
+			graphStore,
+		)
+
+	eventStore :=
+		NewEventStore(
+			repo.FS(),
+		)
+
+	eventService :=
+		NewEventService(
+			eventStore,
+		)
 
 	return &ObjectSystem{
 
@@ -56,18 +78,18 @@ func NewObjectSystem(
 
 		Behavior: behavior,
 
-		BehaviorService: NewBehaviorService(
-			behavior,
-		),
+		BehaviorService: behaviorService,
 
 		MigrationEngine: migration,
 
-		MigrationService: NewMigrationService(
-			migration,
-		),
+		MigrationService: migrationService,
 
 		GraphStore: graphStore,
 
 		GraphService: graphService,
+
+		EventStore: eventStore,
+
+		EventService: eventService,
 	}
 }
