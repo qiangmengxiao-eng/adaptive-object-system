@@ -75,3 +75,30 @@ func TestReadMissingObject(t *testing.T) {
 		t.Fatal("expected error")
 	}
 }
+func TestExistsObject(t *testing.T) {
+	fs := memory.New()
+
+	repo := New(fs)
+
+	if err := repo.CreateObject("user", []byte("name: user")); err != nil {
+		t.Fatal(err)
+	}
+
+	exists, err := repo.ExistsObject("user")
+	if err != nil {
+		t.Fatalf("ExistsObject returned error: %v", err)
+	}
+
+	if !exists {
+		t.Fatal("expected object to exist")
+	}
+
+	exists, err = repo.ExistsObject("missing")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if exists {
+		t.Fatal("expected missing object")
+	}
+}
