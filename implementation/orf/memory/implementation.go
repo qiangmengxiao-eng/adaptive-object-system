@@ -134,6 +134,45 @@ func (m *MemoryFS) Mkdir(p string) error {
 	return nil
 }
 
+// WriteFile writes data to a file.
+// If the file exists, its contents are replaced.
+func (m *MemoryFS) WriteFile(p string, data []byte) error {
+	if m == nil || m.root == nil {
+		return fmt.Errorf("filesystem is nil")
+	}
+
+	p = path.Clean(p)
+
+	if p == "/" {
+		return fmt.Errorf("cannot write root directory")
+	}
+
+	parentPath := path.Dir(p)
+	name := path.Base(p)
+
+	parent := m.find(parentPath)
+	if parent == nil {
+		return fmt.Errorf("parent does not exist: %s", parentPath)
+	}
+
+	if !parent.isDir {
+		return fmt.Errorf("parent is not a directory: %s", parentPath)
+	}
+
+	if existing, ok := parent.children[name]; ok {
+		if existing.isDir {
+			return fmt.Errorf("path is a directory: %s", p)
+		}
+
+		existing.data = append([]byte(nil), data...)
+		return nil
+	}
+
+	parent.children[name] = newFile(name, data)
+
+	return nil
+}
+
 // Exists reports whether a path exists.
 func (m *MemoryFS) Exists(path string) (bool, error) {
 	return m.find(path) != nil, nil
