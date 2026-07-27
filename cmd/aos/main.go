@@ -55,7 +55,24 @@ func handleObject(system *repository.ObjectSystem, args []string) {
 		}
 
 		fmt.Println(objects)
+	case "search":
+		if len(args) < 2 {
+			fmt.Println("query required")
+			return
+		}
 
+		objects, err := system.Repository.QueryObjects(
+			repository.ObjectQuery{
+				Name: args[1],
+			},
+		)
+
+		if err != nil {
+			fmt.Println("error:", err)
+			return
+		}
+
+		fmt.Println(objects)
 	case "get":
 		if len(args) < 2 {
 			fmt.Println("object name required")
