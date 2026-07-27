@@ -9,13 +9,13 @@ type ObjectSystem struct {
 	Graph *ObjectGraph
 
 	Behavior *BehaviorEngine
+
+	BehaviorService *BehaviorService
 }
 
 // NewObjectSystem creates an object system.
 func NewObjectSystem(repo *Repository) *ObjectSystem {
-
-	// prepare repository structure
-	_ = repo.EnsureObjectsDirectory()
+	engine := NewBehaviorEngine()
 
 	return &ObjectSystem{
 		Repository: repo,
@@ -24,6 +24,8 @@ func NewObjectSystem(repo *Repository) *ObjectSystem {
 
 		Graph: NewObjectGraph(),
 
-		Behavior: NewBehaviorEngine(),
+		Behavior: engine,
+
+		BehaviorService: NewBehaviorService(engine),
 	}
 }

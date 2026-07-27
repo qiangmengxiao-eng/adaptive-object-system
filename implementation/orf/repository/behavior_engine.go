@@ -1,5 +1,7 @@
 package repository
 
+import "fmt"
+
 // BehaviorEngine executes object behaviors.
 type BehaviorEngine struct {
 	behaviors map[string]ObjectBehavior
@@ -7,9 +9,16 @@ type BehaviorEngine struct {
 
 // NewBehaviorEngine creates a behavior engine.
 func NewBehaviorEngine() *BehaviorEngine {
-	return &BehaviorEngine{
+	engine := &BehaviorEngine{
 		behaviors: make(map[string]ObjectBehavior),
 	}
+
+	_ = engine.Register(ObjectBehavior{
+		Name:   "default",
+		Action: "noop",
+	})
+
+	return engine
 }
 
 // Register registers a behavior.
@@ -28,4 +37,15 @@ func (e *BehaviorEngine) Get(name string) (ObjectBehavior, bool) {
 	behavior, ok := e.behaviors[name]
 
 	return behavior, ok
+}
+
+// Run executes a behavior.
+func (e *BehaviorEngine) Run(name string) error {
+	_, ok := e.Get(name)
+
+	if !ok {
+		return fmt.Errorf("behavior not found: %s", name)
+	}
+
+	return nil
 }
