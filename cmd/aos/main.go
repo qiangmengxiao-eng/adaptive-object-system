@@ -19,6 +19,42 @@ func main() {
 	}
 
 	switch args[0] {
+	case "behavior":
+
+		if len(args) < 2 {
+			fmt.Println("usage: aos behavior <command>")
+			return
+		}
+
+		switch args[1] {
+
+		case "list":
+
+			fmt.Println(system.BehaviorService.List())
+
+		case "run":
+
+			if len(args) < 3 {
+				fmt.Println("behavior name required")
+				return
+			}
+
+			err := system.BehaviorService.Run(
+				args[2],
+				nil,
+			)
+
+			if err != nil {
+				fmt.Println("error:", err)
+				return
+			}
+
+			fmt.Println("executed behavior:", args[2])
+
+		default:
+
+			fmt.Println("unknown behavior command")
+		}
 	case "version":
 		fmt.Println("adaptive-object-system v0.1.0")
 
