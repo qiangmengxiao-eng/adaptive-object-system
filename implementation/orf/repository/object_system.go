@@ -15,25 +15,42 @@ type ObjectSystem struct {
 	MigrationEngine *MigrationEngine
 
 	MigrationService *MigrationService
+
+	GraphStore *GraphStore
+
+	GraphService *GraphService
 }
 
 // NewObjectSystem creates an object system.
-func NewObjectSystem(repo *Repository) *ObjectSystem {
+func NewObjectSystem(
+	repo *Repository,
+) *ObjectSystem {
 
 	behavior := NewBehaviorEngine()
 
 	migration := NewMigrationEngine()
 
-	// default migration path
+	// default schema migration
 	_ = migration.Register(Migration{
 		FromVersion: 1,
 		ToVersion:   2,
 	})
 
+	graphStore := NewGraphStore(
+		repo.FS(),
+	)
+
+	graphService := NewGraphService(
+		graphStore,
+	)
+
 	return &ObjectSystem{
+
 		Repository: repo,
 
-		Registry: NewRegistry(repo),
+		Registry: NewRegistry(
+			repo,
+		),
 
 		Graph: NewObjectGraph(),
 
@@ -48,5 +65,9 @@ func NewObjectSystem(repo *Repository) *ObjectSystem {
 		MigrationService: NewMigrationService(
 			migration,
 		),
+
+		GraphStore: graphStore,
+
+		GraphService: graphService,
 	}
 }

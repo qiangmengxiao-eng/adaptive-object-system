@@ -36,11 +36,24 @@ func main() {
 
 	case "object":
 
-		handleObject(system, args[1:])
+		handleObject(
+			system,
+			args[1:],
+		)
 
 	case "behavior":
 
-		handleBehavior(system, args[1:])
+		handleBehavior(
+			system,
+			args[1:],
+		)
+
+	case "graph":
+
+		handleGraph(
+			system,
+			args[1:],
+		)
 
 	default:
 
@@ -67,7 +80,8 @@ func handleObject(
 
 	case "list":
 
-		objects, err := system.Registry.List()
+		objects, err :=
+			system.Registry.List()
 
 		if err != nil {
 			fmt.Println(
@@ -82,9 +96,11 @@ func handleObject(
 	case "create":
 
 		if len(args) < 2 {
+
 			fmt.Println(
 				"object name required",
 			)
+
 			return
 		}
 
@@ -96,19 +112,22 @@ func handleObject(
 				"version: 1\n",
 		)
 
-		err := system.Registry.Register(
-			name,
-			definition,
-			&repository.ObjectMetadata{
-				Version: 1,
-			},
-		)
+		err :=
+			system.Registry.Register(
+				name,
+				definition,
+				&repository.ObjectMetadata{
+					Version: 1,
+				},
+			)
 
 		if err != nil {
+
 			fmt.Println(
 				"error:",
 				err,
 			)
+
 			return
 		}
 
@@ -120,21 +139,26 @@ func handleObject(
 	case "get":
 
 		if len(args) < 2 {
+
 			fmt.Println(
 				"object name required",
 			)
+
 			return
 		}
 
-		object, err := system.Registry.Get(
-			args[1],
-		)
+		object, err :=
+			system.Registry.Get(
+				args[1],
+			)
 
 		if err != nil {
+
 			fmt.Println(
 				"error:",
 				err,
 			)
+
 			return
 		}
 
@@ -143,9 +167,11 @@ func handleObject(
 	case "inspect":
 
 		if len(args) < 2 {
+
 			fmt.Println(
 				"object name required",
 			)
+
 			return
 		}
 
@@ -155,10 +181,12 @@ func handleObject(
 			)
 
 		if err != nil {
+
 			fmt.Println(
 				"error:",
 				err,
 			)
+
 			return
 		}
 
@@ -180,21 +208,26 @@ func handleObject(
 	case "delete":
 
 		if len(args) < 2 {
+
 			fmt.Println(
 				"object name required",
 			)
+
 			return
 		}
 
-		err := system.Repository.DeleteObject(
-			args[1],
-		)
+		err :=
+			system.Repository.DeleteObject(
+				args[1],
+			)
 
 		if err != nil {
+
 			fmt.Println(
 				"error:",
 				err,
 			)
+
 			return
 		}
 
@@ -206,9 +239,11 @@ func handleObject(
 	case "migrate":
 
 		if len(args) < 2 {
+
 			fmt.Println(
 				"usage: aos object migrate <name>",
 			)
+
 			return
 		}
 
@@ -220,26 +255,32 @@ func handleObject(
 			)
 
 		if err != nil {
+
 			fmt.Println(
 				"error:",
 				err,
 			)
+
 			return
 		}
 
-		oldVersion := definition.Version
+		oldVersion :=
+			definition.Version
 
-		err = system.Repository.MigrateObject(
-			name,
-			system.MigrationService,
-			oldVersion+1,
-		)
+		err =
+			system.Repository.MigrateObject(
+				name,
+				system.MigrationService,
+				oldVersion+1,
+			)
 
 		if err != nil {
+
 			fmt.Println(
 				"error:",
 				err,
 			)
+
 			return
 		}
 
@@ -265,9 +306,11 @@ func handleBehavior(
 ) {
 
 	if len(args) == 0 {
+
 		fmt.Println(
 			"usage: aos behavior <command>",
 		)
+
 		return
 	}
 
@@ -282,22 +325,27 @@ func handleBehavior(
 	case "run":
 
 		if len(args) < 2 {
+
 			fmt.Println(
 				"behavior name required",
 			)
+
 			return
 		}
 
-		err := system.BehaviorService.Run(
-			args[1],
-			nil,
-		)
+		err :=
+			system.BehaviorService.Run(
+				args[1],
+				nil,
+			)
 
 		if err != nil {
+
 			fmt.Println(
 				"error:",
 				err,
 			)
+
 			return
 		}
 
@@ -305,11 +353,112 @@ func handleBehavior(
 			"executed behavior:",
 			args[1],
 		)
+	}
+}
+
+func handleGraph(
+	system *repository.ObjectSystem,
+	args []string,
+) {
+
+	if len(args) == 0 {
+
+		fmt.Println(
+			"usage: aos graph <command>",
+		)
+
+		return
+	}
+
+	switch args[0] {
+
+	case "list":
+
+		relations, err :=
+			system.GraphService.List()
+
+		if err != nil {
+
+			fmt.Println(
+				"error:",
+				err,
+			)
+
+			return
+		}
+
+		fmt.Println(
+			relations,
+		)
+
+	case "add":
+
+		if len(args) < 4 {
+
+			fmt.Println(
+				"usage: aos graph add <from> <to> <type>",
+			)
+
+			return
+		}
+
+		err :=
+			system.GraphService.AddRelation(
+				repository.ObjectRelation{
+					From: args[1],
+					To:   args[2],
+					Type: args[3],
+				},
+			)
+
+		if err != nil {
+
+			fmt.Println(
+				"error:",
+				err,
+			)
+
+			return
+		}
+
+		fmt.Println(
+			"relation added",
+		)
+
+	case "query":
+
+		if len(args) < 2 {
+
+			fmt.Println(
+				"usage: aos graph query <object>",
+			)
+
+			return
+		}
+
+		relations, err :=
+			system.GraphService.QueryRelations(
+				args[1],
+			)
+
+		if err != nil {
+
+			fmt.Println(
+				"error:",
+				err,
+			)
+
+			return
+		}
+
+		fmt.Println(
+			relations,
+		)
 
 	default:
 
 		fmt.Println(
-			"unknown behavior command:",
+			"unknown graph command:",
 			args[0],
 		)
 	}
