@@ -119,3 +119,63 @@ func (r *Repository) ReadObjectDefinition(name string) (*ObjectDefinition, error
 
 	return &definition, nil
 }
+
+const MetadataFileName = "metadata.yaml"
+
+// WriteObjectMetadata writes object metadata.
+func (r *Repository) WriteObjectMetadata(name string, metadata *ObjectMetadata) error {
+	if err := metadata.Validate(); err != nil {
+		return err
+	}
+
+	data, err := yaml.Marshal(metadata)
+	if err != nil {
+		return err
+	}
+
+	return r.fs.WriteFile(
+		path.Join("/objects", name, MetadataFileName),
+		data,
+	)
+}
+
+// ReadObjectMetadata reads object metadata.
+func (r *Repository) ReadObjectMetadata(name string) (*ObjectMetadata, error) {
+	data, err := r.fs.ReadFile(
+		path.Join("/objects", name, MetadataFileName),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var metadata ObjectMetadata
+
+	if err := yaml.Unmarshal(data, &metadata); err != nil {
+		return nil, err
+	}
+
+	if err := metadata.Validate(); err != nil {
+		return nil, err
+	}
+
+	return &metadata, nil
+}
+
+// LoadObject loads a complete runtime object.
+func (r *Repository) LoadObject(name string) (*Object, error) {
+	definition, err := r.ReadObjectDefinition(name)
+	if err != nil {
+		return nil, err
+	}
+
+	metadata, err := r.ReadObjectMetadata(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Object{
+		Definition: *definition,
+		Metadata:   *metadata,
+	}, nil
+}
