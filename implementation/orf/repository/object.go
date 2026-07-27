@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"path"
+	"sort"
 )
 
 // CreateObject creates a new object with its definition file.
@@ -60,4 +61,28 @@ func (r *Repository) DeleteObject(name string) error {
 
 	// Remove now-empty object directory.
 	return r.fs.Delete(objectPath)
+}
+
+// ListObjects returns all object names.
+func (r *Repository) ListObjects() ([]string, error) {
+	if r == nil || r.fs == nil {
+		return nil, fmt.Errorf("repository filesystem is nil")
+	}
+
+	entries, err := r.fs.ReadDir("/objects")
+	if err != nil {
+		return nil, err
+	}
+
+	objects := make([]string, 0)
+
+	for _, entry := range entries {
+		if entry.IsDirectory {
+			objects = append(objects, entry.Name)
+		}
+	}
+
+	sort.Strings(objects)
+
+	return objects, nil
 }

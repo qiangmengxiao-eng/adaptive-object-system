@@ -101,3 +101,36 @@ func TestDeleteMissingObject(t *testing.T) {
 		t.Fatal("expected error")
 	}
 }
+func TestListObjects(t *testing.T) {
+	fs := memory.New()
+
+	repo := New(fs)
+
+	if err := repo.CreateObject("user", []byte("name: user")); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := repo.CreateObject("product", []byte("name: product")); err != nil {
+		t.Fatal(err)
+	}
+
+	objects, err := repo.ListObjects()
+	if err != nil {
+		t.Fatalf("ListObjects returned error: %v", err)
+	}
+
+	expected := []string{
+		"product",
+		"user",
+	}
+
+	if len(objects) != len(expected) {
+		t.Fatalf("objects = %v, want %v", objects, expected)
+	}
+
+	for i := range expected {
+		if objects[i] != expected[i] {
+			t.Fatalf("objects = %v, want %v", objects, expected)
+		}
+	}
+}
