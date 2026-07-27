@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"path"
 	"sort"
+
+	"gopkg.in/yaml.v3"
 )
 
 // CreateObject creates a new object with its definition file.
@@ -96,4 +98,20 @@ func (r *Repository) ExistsObject(name string) (bool, error) {
 	objectPath := path.Join("/objects", name)
 
 	return r.fs.Exists(objectPath)
+}
+
+// ReadObjectDefinition reads and parses an object's definition.
+func (r *Repository) ReadObjectDefinition(name string) (*ObjectDefinition, error) {
+	data, err := r.ReadObject(name)
+	if err != nil {
+		return nil, err
+	}
+
+	var definition ObjectDefinition
+
+	if err := yaml.Unmarshal(data, &definition); err != nil {
+		return nil, err
+	}
+
+	return &definition, nil
 }
