@@ -42,3 +42,22 @@ func (r *Repository) ReadObject(name string) ([]byte, error) {
 
 	return r.fs.ReadFile(definitionPath)
 }
+
+// DeleteObject removes an object and its definition file.
+func (r *Repository) DeleteObject(name string) error {
+	if r == nil || r.fs == nil {
+		return fmt.Errorf("repository filesystem is nil")
+	}
+
+	objectPath := path.Join("/objects", name)
+
+	definitionPath := DefinitionPath(objectPath)
+
+	// Remove definition file first.
+	if err := r.fs.Delete(definitionPath); err != nil {
+		return err
+	}
+
+	// Remove now-empty object directory.
+	return r.fs.Delete(objectPath)
+}
