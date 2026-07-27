@@ -13,6 +13,10 @@ type ObjectSystem struct {
 
 // NewObjectSystem creates an object system.
 func NewObjectSystem(repo *Repository) *ObjectSystem {
+
+	// prepare repository structure
+	_ = repo.EnsureObjectsDirectory()
+
 	return &ObjectSystem{
 		Repository: repo,
 

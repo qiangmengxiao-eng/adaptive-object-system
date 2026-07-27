@@ -18,3 +18,17 @@ func New(fs filesystem.MutableRepositoryFS) *Repository {
 func (r *Repository) FS() filesystem.MutableRepositoryFS {
 	return r.fs
 }
+
+// EnsureObjectsDirectory creates the objects directory if missing.
+func (r *Repository) EnsureObjectsDirectory() error {
+	exists, err := r.fs.Exists("/objects")
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		return nil
+	}
+
+	return r.fs.Mkdir("/objects")
+}
