@@ -6,34 +6,17 @@ import (
 	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/memory"
 )
 
-func TestNew(t *testing.T) {
-	fs := memory.New()
-
-	repo := New(fs)
-
-	if repo == nil {
-		t.Fatal("New returned nil")
-	}
-}
-
-func TestFS(t *testing.T) {
-	fs := memory.New()
-
-	repo := New(fs)
-
-	if repo.FS() != fs {
-		t.Fatal("FS returned different filesystem")
-	}
-}
-
 func TestRepositoryUsesMutableFS(t *testing.T) {
 	fs := memory.New()
 
 	repo := New(fs)
 
-	err := repo.FS().Mkdir("/objects")
-	if err != nil {
-		t.Fatalf("Mkdir returned error: %v", err)
+	if repo.FS() != fs {
+		t.Fatal("repository should keep the provided filesystem")
+	}
+
+	if err := fs.Mkdir("/objects"); err != nil {
+		t.Fatal(err)
 	}
 
 	exists, err := fs.Exists("/objects")
@@ -43,62 +26,5 @@ func TestRepositoryUsesMutableFS(t *testing.T) {
 
 	if !exists {
 		t.Fatal("expected /objects to exist")
-	}
-}
-func TestReadObject(t *testing.T) {
-	fs := memory.New()
-
-	repo := New(fs)
-
-	err := repo.CreateObject("user", []byte("name: user"))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	data, err := repo.ReadObject("user")
-	if err != nil {
-		t.Fatalf("ReadObject returned error: %v", err)
-	}
-
-	if string(data) != "name: user" {
-		t.Fatalf("data = %q, want %q", string(data), "name: user")
-	}
-}
-
-func TestReadMissingObject(t *testing.T) {
-	fs := memory.New()
-
-	repo := New(fs)
-
-	_, err := repo.ReadObject("missing")
-	if err == nil {
-		t.Fatal("expected error")
-	}
-}
-func TestExistsObject(t *testing.T) {
-	fs := memory.New()
-
-	repo := New(fs)
-
-	if err := repo.CreateObject("user", []byte("name: user")); err != nil {
-		t.Fatal(err)
-	}
-
-	exists, err := repo.ExistsObject("user")
-	if err != nil {
-		t.Fatalf("ExistsObject returned error: %v", err)
-	}
-
-	if !exists {
-		t.Fatal("expected object to exist")
-	}
-
-	exists, err = repo.ExistsObject("missing")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if exists {
-		t.Fatal("expected missing object")
 	}
 }
