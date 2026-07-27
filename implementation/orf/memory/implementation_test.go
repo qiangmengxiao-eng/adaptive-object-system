@@ -388,3 +388,133 @@ func TestMkdirRoot(t *testing.T) {
 		t.Fatal("expected error")
 	}
 }
+func TestWriteFile(t *testing.T) {
+	fs := New()
+
+	data := []byte("hello world")
+
+	if err := fs.WriteFile("/hello.txt", data); err != nil {
+		t.Fatalf("WriteFile returned error: %v", err)
+	}
+
+	exists, err := fs.Exists("/hello.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !exists {
+		t.Fatal("expected /hello.txt to exist")
+	}
+
+	content, err := fs.ReadFile("/hello.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(content) != "hello world" {
+		t.Fatalf("content = %q, want %q", string(content), "hello world")
+	}
+}
+
+func TestWriteFileOverwrite(t *testing.T) {
+	fs := New()
+
+	if err := fs.WriteFile("/hello.txt", []byte("hello")); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.WriteFile("/hello.txt", []byte("world")); err != nil {
+		t.Fatal(err)
+	}
+
+	content, err := fs.ReadFile("/hello.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(content) != "world" {
+		t.Fatalf("content = %q, want %q", string(content), "world")
+	}
+}
+
+func TestWriteFileCreatesUnderDirectory(t *testing.T) {
+	fs := New()
+
+	if err := fs.Mkdir("/docs"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.WriteFile("/docs/readme.md", []byte("# README")); err != nil {
+		t.Fatal(err)
+	}
+
+	content, err := fs.ReadFile("/docs/readme.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(content) != "# README" {
+		t.Fatalf("content = %q, want %q", string(content), "# README")
+	}
+}
+
+func TestWriteFileParentMissing(t *testing.T) {
+	fs := New()
+
+	if err := fs.WriteFile("/missing/file.txt", []byte("data")); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestWriteFileParentIsFile(t *testing.T) {
+	fs := New()
+
+	if err := fs.WriteFile("/README.md", []byte("data")); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.WriteFile("/README.md/file.txt", []byte("data")); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestWriteFileDirectory(t *testing.T) {
+	fs := New()
+
+	if err := fs.Mkdir("/docs"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := fs.WriteFile("/docs", []byte("data")); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestWriteFileRoot(t *testing.T) {
+	fs := New()
+
+	if err := fs.WriteFile("/", []byte("data")); err == nil {
+		t.Fatal("expected error")
+	}
+}
+
+func TestWriteFileReturnsCopy(t *testing.T) {
+	fs := New()
+
+	data := []byte("hello")
+
+	if err := fs.WriteFile("/hello.txt", data); err != nil {
+		t.Fatal(err)
+	}
+
+	data[0] = 'X'
+
+	content, err := fs.ReadFile("/hello.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(content) != "hello" {
+		t.Fatalf("content = %q, want %q", string(content), "hello")
+	}
+}
