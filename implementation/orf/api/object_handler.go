@@ -150,6 +150,21 @@ func (s *Server) handleObject(
 	r *http.Request,
 ) {
 
+	// Phase 8 Seller Intelligence
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/seller-analysis",
+	) {
+
+		s.handleSellerAnalysis(
+			w,
+			r,
+		)
+
+		return
+	}
+
 	// Phase 7 Amazon Autonomous Agent
 
 	if strings.HasSuffix(
