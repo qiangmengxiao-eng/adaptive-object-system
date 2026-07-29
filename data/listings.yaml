@@ -1,0 +1,22 @@
+listings:
+    - object: amazon-agent
+      product: Wireless Earbuds
+      features:
+        - Bluetooth 5.3
+        - Noise Cancelling
+        - Sports Design
+      title: Wireless Earbuds wireless earbuds bluetooth headphones sports earbuds
+      bullet_points:
+        - Bluetooth 5.3
+        - Noise Cancelling
+        - Premium quality design
+        - Easy to use
+        - Reliable daily performance
+      description: Designed for customers seeking a reliable and practical solution.
+      keywords:
+        - wireless earbuds
+        - bluetooth headphones
+        - sports earbuds
+      strategy: keyword_front_loading
+      version: 1
+      created_at: 2026-07-29T18:58:25.611729+08:00

@@ -279,3 +279,27 @@ events:
       data: retry_strategy
       version: 1
       timestamp: 2026-07-29T16:34:10.416878+08:00
+    - id: evt-1785320067150878000
+      type: object.created
+      object: adaptive-v8
+      action: create
+      version: 1
+      timestamp: 2026-07-29T18:14:27.150882+08:00
+    - id: evt-1785320067153112000
+      type: behavior.executed
+      object: adaptive-v8
+      action: initialize
+      version: 1
+      timestamp: 2026-07-29T18:14:27.153114+08:00
+    - id: evt-1785322523267520000
+      type: object.created
+      object: amazon-agent
+      action: create
+      version: 1
+      timestamp: 2026-07-29T18:55:23.267526+08:00
+    - id: evt-1785322523268910000
+      type: behavior.executed
+      object: amazon-agent
+      action: initialize
+      version: 1
+      timestamp: 2026-07-29T18:55:23.268911+08:00

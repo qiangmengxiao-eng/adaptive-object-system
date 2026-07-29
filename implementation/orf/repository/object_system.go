@@ -76,6 +76,10 @@ type ObjectSystem struct {
 
 	Knowledge *KnowledgeEngine
 
+	ListingStore *ListingStore
+
+	Listing *ListingEngine
+
 	// Phase 4
 
 	Collaboration *CollaborationEngine
@@ -205,11 +209,21 @@ func NewObjectSystem(
 		NewKnowledgeStore(
 			repo.FS(),
 		)
+	listingStore :=
+		NewListingStore(
+			repo.FS(),
+		)
 
 	knowledge :=
 		NewKnowledgeEngine(
 			experienceEngine,
 			knowledgeStore,
+		)
+
+	listing :=
+		NewListingEngine(
+			knowledge,
+			listingStore,
 		)
 
 	// Decision Engine
@@ -335,6 +349,10 @@ func NewObjectSystem(
 			KnowledgeStore: knowledgeStore,
 
 			Knowledge: knowledge,
+
+			ListingStore: listingStore,
+
+			Listing: listing,
 
 			// Phase 4
 

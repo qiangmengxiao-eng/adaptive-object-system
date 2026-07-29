@@ -1,4 +1,58 @@
 objects:
+    - id: adaptive-v8
+      name: adaptive-v8
+      definition:
+        name: adaptive-v8
+        type: object
+        id: adaptive-v8
+        version: 1
+      state:
+        name: lifecycle
+        status: active
+      events:
+        - id: evt-1785320067153112000
+          type: behavior.executed
+          object: adaptive-v8
+          action: initialize
+          version: 1
+          timestamp: 2026-07-29T18:14:27.153114+08:00
+        - id: evt-1785320067150878000
+          type: object.created
+          object: adaptive-v8
+          action: create
+          version: 1
+          timestamp: 2026-07-29T18:14:27.150882+08:00
+      behaviors: []
+      relations: []
+      created_at: 2026-07-29T18:14:27.148896+08:00
+      updated_at: 2026-07-29T18:14:27.157089+08:00
+    - id: amazon-agent
+      name: amazon-agent
+      definition:
+        name: amazon-agent
+        type: object
+        id: amazon-agent
+        version: 1
+      state:
+        name: lifecycle
+        status: active
+      events:
+        - id: evt-1785322523268910000
+          type: behavior.executed
+          object: amazon-agent
+          action: initialize
+          version: 1
+          timestamp: 2026-07-29T18:55:23.268911+08:00
+        - id: evt-1785322523267520000
+          type: object.created
+          object: amazon-agent
+          action: create
+          version: 1
+          timestamp: 2026-07-29T18:55:23.267526+08:00
+      behaviors: []
+      relations: []
+      created_at: 2026-07-29T18:55:23.261211+08:00
+      updated_at: 2026-07-29T18:55:23.272262+08:00
     - id: adaptive-agent
       name: adaptive-agent
       definition:
@@ -210,6 +264,39 @@ objects:
       relations: []
       created_at: 2026-07-28T21:52:15.213785+08:00
       updated_at: 2026-07-28T21:52:22.379713+08:00
+    - id: adaptive-v3
+      name: adaptive-v3
+      definition:
+        name: adaptive-v3
+        type: object
+        id: adaptive-v3
+        version: 1
+      state:
+        name: lifecycle
+        status: active
+      events:
+        - id: evt-1785245702352135000
+          type: behavior.executed
+          object: adaptive-v3
+          action: initialize
+          version: 1
+          timestamp: 2026-07-28T21:35:02.352135+08:00
+        - id: evt-1785245702350889000
+          type: object.created
+          object: adaptive-v3
+          action: create
+          version: 1
+          timestamp: 2026-07-28T21:35:02.350893+08:00
+        - id: evt-1785245707975675000
+          type: task.failed
+          object: adaptive-v3
+          action: retry
+          version: 1
+          timestamp: 2026-07-28T21:35:07.97568+08:00
+      behaviors: []
+      relations: []
+      created_at: 2026-07-28T21:35:02.349791+08:00
+      updated_at: 2026-07-28T21:35:07.977376+08:00
     - id: agent
       name: agent
       definition:
@@ -348,39 +435,6 @@ objects:
       relations: []
       created_at: 2026-07-28T21:24:41.536113+08:00
       updated_at: 2026-07-28T21:24:46.682349+08:00
-    - id: adaptive-v3
-      name: adaptive-v3
-      definition:
-        name: adaptive-v3
-        type: object
-        id: adaptive-v3
-        version: 1
-      state:
-        name: lifecycle
-        status: active
-      events:
-        - id: evt-1785245702352135000
-          type: behavior.executed
-          object: adaptive-v3
-          action: initialize
-          version: 1
-          timestamp: 2026-07-28T21:35:02.352135+08:00
-        - id: evt-1785245702350889000
-          type: object.created
-          object: adaptive-v3
-          action: create
-          version: 1
-          timestamp: 2026-07-28T21:35:02.350893+08:00
-        - id: evt-1785245707975675000
-          type: task.failed
-          object: adaptive-v3
-          action: retry
-          version: 1
-          timestamp: 2026-07-28T21:35:07.97568+08:00
-      behaviors: []
-      relations: []
-      created_at: 2026-07-28T21:35:02.349791+08:00
-      updated_at: 2026-07-28T21:35:07.977376+08:00
     - id: package
       name: package
       definition:

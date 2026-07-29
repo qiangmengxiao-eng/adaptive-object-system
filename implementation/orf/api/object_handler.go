@@ -150,11 +150,38 @@ func (s *Server) handleObject(
 	r *http.Request,
 ) {
 
+	// Phase 5 Amazon Listing
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/listing",
+	) {
+
+		s.handleObjectListing(
+			w,
+			r,
+		)
+
+		return
+	}
+
 	name :=
 		strings.TrimPrefix(
 			r.URL.Path,
 			"/objects/",
 		)
+
+	if strings.HasSuffix(
+		name,
+		"/listing",
+	) {
+
+		s.handleObjectListing(
+			w,
+			r,
+		)
+
+		return
+	}
 
 	if strings.HasSuffix(
 		name,
