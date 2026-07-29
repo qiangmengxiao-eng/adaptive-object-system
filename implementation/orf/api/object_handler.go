@@ -150,6 +150,21 @@ func (s *Server) handleObject(
 	r *http.Request,
 ) {
 
+	// Phase 7 Amazon Autonomous Agent
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/amazon-agent",
+	) {
+
+		s.handleAmazonAgent(
+			w,
+			r,
+		)
+
+		return
+	}
+
 	// Phase 5 Amazon Listing
 	if strings.HasSuffix(
 		r.URL.Path,

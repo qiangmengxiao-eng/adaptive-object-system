@@ -86,6 +86,12 @@ type ObjectSystem struct {
 
 	ListingOptimizer *ListingOptimizer
 
+	ProductAnalysis *ProductAnalysisEngine
+
+	KeywordStrategy *KeywordStrategyEngine
+
+	AmazonAgent *AmazonAgent
+
 	// Phase 4
 
 	Collaboration *CollaborationEngine
@@ -247,6 +253,20 @@ func NewObjectSystem(
 			knowledge,
 		)
 
+	productAnalysis :=
+		NewProductAnalysisEngine()
+
+	keywordStrategy :=
+		NewKeywordStrategyEngine()
+
+	amazonAgent :=
+		NewAmazonAgent(
+			productAnalysis,
+			keywordStrategy,
+			listing,
+			listingQuality,
+		)
+
 	// Decision Engine
 
 	decision :=
@@ -380,6 +400,12 @@ func NewObjectSystem(
 			ListingQuality: listingQuality,
 
 			ListingOptimizer: listingOptimizer,
+
+			ProductAnalysis: productAnalysis,
+
+			KeywordStrategy: keywordStrategy,
+
+			AmazonAgent: amazonAgent,
 
 			// Phase 4
 

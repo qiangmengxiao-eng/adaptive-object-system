@@ -9,7 +9,7 @@ import (
 	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository"
 )
 
-const serverVersion = "v0.1.0"
+const serverVersion = "v1.3.0"
 
 func main() {
 
