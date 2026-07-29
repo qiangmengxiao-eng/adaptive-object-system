@@ -1,0 +1,15 @@
+collaborations:
+    - from: adaptive-v7
+      to: adaptive-v8
+      action: share_knowledge
+      status: completed
+      result: success
+      version: 1
+      created_at: 2026-07-29T17:22:58.623702+08:00
+    - from: adaptive-v7
+      to: adaptive-v8
+      action: share_knowledge
+      status: completed
+      result: success
+      version: 1
+      created_at: 2026-07-29T17:29:21.186599+08:00

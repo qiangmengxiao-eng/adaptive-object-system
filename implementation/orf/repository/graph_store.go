@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"path"
 
 	"gopkg.in/yaml.v3"
 )
@@ -95,10 +94,7 @@ func (s *GraphStore) Save(
 // GraphFilePath returns graph path.
 func GraphFilePath() string {
 
-	return path.Join(
-		"/",
-		GraphFileName,
-	)
+	return GraphFileName
 }
 
 func validateGraphStore(

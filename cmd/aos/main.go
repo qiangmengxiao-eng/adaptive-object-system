@@ -12,18 +12,32 @@ const version = "v0.1.0"
 
 func main() {
 
-	args := os.Args[1:]
+	args :=
+		os.Args[1:]
 
 	if len(args) == 0 {
-		fmt.Println("usage: aos <command>")
+
+		fmt.Println(
+			"usage: aos <command>",
+		)
+
 		return
 	}
 
-	fs := filesystem.NewLocal("./data")
+	fs :=
+		filesystem.NewLocal(
+			"./data",
+		)
 
-	repo := repository.New(fs)
+	repo :=
+		repository.New(
+			fs,
+		)
 
-	system := repository.NewObjectSystem(repo)
+	system :=
+		repository.NewObjectSystem(
+			repo,
+		)
 
 	switch args[0] {
 
@@ -32,6 +46,13 @@ func main() {
 		fmt.Println(
 			"adaptive-object-system",
 			version,
+		)
+
+	case "system":
+
+		handleSystem(
+			system,
+			args[1:],
 		)
 
 	case "object":
@@ -48,16 +69,16 @@ func main() {
 			args[1:],
 		)
 
-	case "behavior":
+	case "event":
 
-		handleBehavior(
+		handleEvent(
 			system,
 			args[1:],
 		)
 
-	case "event":
+	case "behavior":
 
-		handleEvent(
+		handleBehavior(
 			system,
 			args[1:],
 		)
@@ -71,19 +92,97 @@ func main() {
 	}
 }
 
+// system commands
+
+func handleSystem(
+	system *repository.ObjectSystem,
+	args []string,
+) {
+
+	if len(args) == 0 {
+
+		fmt.Println(
+			"usage: aos system status",
+		)
+
+		return
+	}
+
+	switch args[0] {
+
+	case "status":
+
+		status :=
+			system.StatusService.Get()
+
+		fmt.Println(
+			"Adaptive Object System",
+		)
+
+		fmt.Println()
+
+		fmt.Println(
+			"Objects:",
+			status.Objects,
+		)
+
+		fmt.Println(
+			"Runtime:",
+			status.Runtime,
+		)
+
+		fmt.Println(
+			"Events:",
+			status.Events,
+		)
+
+		fmt.Println(
+			"Behaviors:",
+			status.Behaviors,
+		)
+
+		fmt.Println(
+			"Audit:",
+			status.Audit,
+		)
+	}
+}
+
+// object commands
+
 func handleObject(
 	system *repository.ObjectSystem,
 	args []string,
 ) {
 
 	if len(args) == 0 {
+
 		fmt.Println(
 			"usage: aos object <command>",
 		)
+
 		return
 	}
 
 	switch args[0] {
+
+	case "query":
+
+		objects, err :=
+			system.QueryService.ListObjects()
+
+		if err != nil {
+
+			fmt.Println(
+				err,
+			)
+
+			return
+		}
+
+		fmt.Println(
+			objects,
+		)
 
 	case "list":
 
@@ -91,31 +190,38 @@ func handleObject(
 			system.Registry.List()
 
 		if err != nil {
+
 			fmt.Println(
-				"error:",
 				err,
 			)
+
 			return
 		}
 
-		fmt.Println(objects)
+		fmt.Println(
+			objects,
+		)
 
 	case "create":
 
 		if len(args) < 2 {
+
 			fmt.Println(
 				"object name required",
 			)
+
 			return
 		}
 
-		name := args[1]
+		name :=
+			args[1]
 
-		definition := []byte(
-			"name: " + name + "\n" +
-				"type: object\n" +
-				"version: 1\n",
-		)
+		definition :=
+			[]byte(
+				"name: " + name + "\n" +
+					"type: object\n" +
+					"version: 1\n",
+			)
 
 		err :=
 			system.Registry.Register(
@@ -127,11 +233,43 @@ func handleObject(
 			)
 
 		if err != nil {
+
 			fmt.Println(
-				"error:",
 				err,
 			)
+
 			return
+		}
+
+		objectDefinition, err :=
+			system.Repository.ReadObjectDefinition(
+				name,
+			)
+
+		if err == nil {
+
+			system.Runtime.Start(
+				*objectDefinition,
+			)
+
+			event :=
+				repository.NewObjectEvent(
+					"object.created",
+					name,
+					"create",
+					"",
+				)
+
+			_ =
+				system.EventBus.Publish(
+					event,
+				)
+
+			_ =
+				system.Runtime.AddEvent(
+					name,
+					event,
+				)
 		}
 
 		fmt.Println(
@@ -139,49 +277,28 @@ func handleObject(
 			name,
 		)
 
-	case "get":
+	case "runtime":
 
 		if len(args) < 2 {
+
 			fmt.Println(
 				"object name required",
 			)
+
 			return
 		}
 
-		object, err :=
-			system.Registry.Get(
+		object, ok :=
+			system.Runtime.Get(
 				args[1],
 			)
 
-		if err != nil {
+		if !ok {
+
 			fmt.Println(
-				"error:",
-				err,
-			)
-			return
-		}
-
-		fmt.Println(object)
-
-	case "inspect":
-
-		if len(args) < 2 {
-			fmt.Println(
-				"object name required",
-			)
-			return
-		}
-
-		object, err :=
-			system.Repository.ReadObjectDefinition(
-				args[1],
+				"runtime object not found",
 			)
 
-		if err != nil {
-			fmt.Println(
-				"error:",
-				err,
-			)
 			return
 		}
 
@@ -191,92 +308,86 @@ func handleObject(
 		)
 
 		fmt.Println(
-			"Type:",
-			object.Type,
+			"State:",
+			object.State.Status,
 		)
 
 		fmt.Println(
-			"Version:",
-			object.Version,
+			"Events:",
+			len(object.Events),
 		)
 
-	case "delete":
+	case "inspect":
 
 		if len(args) < 2 {
+
 			fmt.Println(
 				"object name required",
 			)
+
 			return
 		}
 
-		err :=
-			system.Repository.DeleteObject(
+		view, err :=
+			system.ObjectViewService.Inspect(
 				args[1],
 			)
 
 		if err != nil {
+
 			fmt.Println(
-				"error:",
 				err,
 			)
+
 			return
 		}
 
 		fmt.Println(
-			"deleted object:",
-			args[1],
+			"Object:",
+			view.Name,
 		)
 
-	case "migrate":
+		fmt.Println(
+			"Type:",
+			view.Definition.Type,
+		)
 
-		if len(args) < 2 {
+		fmt.Println(
+			"Version:",
+			view.Definition.Version,
+		)
+
+		if view.Runtime != nil {
+
 			fmt.Println(
-				"usage: aos object migrate <name>",
+				"State:",
+				view.Runtime.State.Status,
 			)
-			return
+
+			fmt.Println(
+				"Events:",
+				len(view.Events),
+			)
 		}
 
-		name := args[1]
+		fmt.Println(
+			"Relations:",
+			view.Relations,
+		)
 
-		definition, err :=
-			system.Repository.ReadObjectDefinition(
-				name,
-			)
+		fmt.Println(
+			"Behaviors:",
+			view.Behaviors,
+		)
 
-		if err != nil {
-			fmt.Println(
-				"error:",
-				err,
-			)
-			return
-		}
-
-		oldVersion :=
-			definition.Version
-
-		err =
-			system.Repository.MigrateObject(
-				name,
-				system.MigrationService,
-				oldVersion+1,
-			)
-
-		if err != nil {
-			fmt.Println(
-				"error:",
-				err,
-			)
-			return
-		}
-
-		fmt.Printf(
-			"migrated object: %s %d -> %d\n",
-			name,
-			oldVersion,
-			oldVersion+1,
+		fmt.Println(
+			"Audit:",
+			view.Audit,
 		)
 	}
 }
+
+// graph commands
 
 func handleGraph(
 	system *repository.ObjectSystem,
@@ -284,32 +395,24 @@ func handleGraph(
 ) {
 
 	if len(args) == 0 {
+
 		fmt.Println(
 			"usage: aos graph <command>",
 		)
+
 		return
 	}
 
 	switch args[0] {
 
-	case "list":
-
-		relations, err :=
-			system.GraphService.List()
-
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		fmt.Println(relations)
-
 	case "add":
 
 		if len(args) < 4 {
+
 			fmt.Println(
-				"usage: aos graph add <from> <to> <type>",
+				"usage: aos graph add <from> <to> <relation>",
 			)
+
 			return
 		}
 
@@ -323,7 +426,11 @@ func handleGraph(
 			)
 
 		if err != nil {
-			fmt.Println(err)
+
+			fmt.Println(
+				err,
+			)
+
 			return
 		}
 
@@ -333,69 +440,71 @@ func handleGraph(
 
 	case "query":
 
+		if len(args) < 2 {
+
+			fmt.Println(
+				"usage: aos graph query <object>",
+			)
+
+			return
+		}
+
 		relations, err :=
 			system.GraphService.QueryRelations(
 				args[1],
 			)
 
 		if err != nil {
-			fmt.Println(err)
+
+			fmt.Println(
+				err,
+			)
+
 			return
 		}
 
-		fmt.Println(relations)
-	}
-}
-
-func handleBehavior(
-	system *repository.ObjectSystem,
-	args []string,
-) {
-
-	if len(args) == 0 {
 		fmt.Println(
-			"usage: aos behavior <command>",
-		)
-		return
-	}
-
-	switch args[0] {
-
-	case "list":
-
-		fmt.Println(
-			system.BehaviorService.List(),
+			relations,
 		)
 
-	case "run":
+	case "inspect":
 
 		if len(args) < 2 {
+
 			fmt.Println(
-				"behavior name required",
+				"object required",
 			)
+
 			return
 		}
 
-		err :=
-			system.BehaviorService.Run(
+		view, err :=
+			system.ObjectViewService.Inspect(
 				args[1],
-				nil,
 			)
 
 		if err != nil {
+
 			fmt.Println(
-				"error:",
 				err,
 			)
+
 			return
 		}
 
 		fmt.Println(
-			"executed behavior:",
-			args[1],
+			"Object:",
+			view.Name,
+		)
+
+		fmt.Println(
+			"Relations:",
+			view.Relations,
 		)
 	}
 }
+
+// event commands
 
 func handleEvent(
 	system *repository.ObjectSystem,
@@ -421,7 +530,6 @@ func handleEvent(
 		if err != nil {
 
 			fmt.Println(
-				"error:",
 				err,
 			)
 
@@ -431,12 +539,18 @@ func handleEvent(
 		fmt.Println(
 			events,
 		)
-
-	default:
-
-		fmt.Println(
-			"unknown event command:",
-			args[0],
-		)
 	}
+}
+
+// behavior commands
+
+func handleBehavior(
+	system *repository.ObjectSystem,
+	args []string,
+) {
+
+	fmt.Println(
+		"behavior command",
+		args,
+	)
 }

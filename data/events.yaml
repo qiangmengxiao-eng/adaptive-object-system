@@ -1,0 +1,281 @@
+events:
+    - id: evt-1785240979695172000
+      type: object.created
+      object: agent
+      action: create
+      version: 1
+      timestamp: 2026-07-28T20:16:19.695177+08:00
+    - id: evt-1785240979695320000
+      type: behavior.executed
+      object: agent
+      action: initialize
+      version: 1
+      timestamp: 2026-07-28T20:16:19.69532+08:00
+    - id: evt-1785240985388611000
+      type: task.completed
+      object: agent
+      action: finish
+      version: 1
+      timestamp: 2026-07-28T20:16:25.388615+08:00
+    - id: evt-1785240990942055000
+      type: task.failed
+      object: agent
+      action: retry
+      version: 1
+      timestamp: 2026-07-28T20:16:30.94206+08:00
+    - id: evt-1785244771380588000
+      type: object.created
+      object: adaptive-agent
+      action: create
+      version: 1
+      timestamp: 2026-07-28T21:19:31.380591+08:00
+    - id: evt-1785244771380919000
+      type: behavior.executed
+      object: adaptive-agent
+      action: initialize
+      version: 1
+      timestamp: 2026-07-28T21:19:31.38092+08:00
+    - id: evt-1785244776348419000
+      type: task.failed
+      object: adaptive-agent
+      action: retry
+      version: 1
+      timestamp: 2026-07-28T21:19:36.348424+08:00
+    - id: evt-1785245081537240000
+      type: object.created
+      object: adaptive-test
+      action: create
+      version: 1
+      timestamp: 2026-07-28T21:24:41.537247+08:00
+    - id: evt-1785245081538313000
+      type: behavior.executed
+      object: adaptive-test
+      action: initialize
+      version: 1
+      timestamp: 2026-07-28T21:24:41.538314+08:00
+    - id: evt-1785245086681276000
+      type: task.failed
+      object: adaptive-test
+      action: retry
+      version: 1
+      timestamp: 2026-07-28T21:24:46.68128+08:00
+    - id: evt-1785245353237101000
+      type: object.created
+      object: adaptive-v2
+      action: create
+      version: 1
+      timestamp: 2026-07-28T21:29:13.237108+08:00
+    - id: evt-1785245353237950000
+      type: behavior.executed
+      object: adaptive-v2
+      action: initialize
+      version: 1
+      timestamp: 2026-07-28T21:29:13.237951+08:00
+    - id: evt-1785245358746510000
+      type: task.failed
+      object: adaptive-v2
+      action: retry
+      version: 1
+      timestamp: 2026-07-28T21:29:18.746516+08:00
+    - id: evt-1785245702350889000
+      type: object.created
+      object: adaptive-v3
+      action: create
+      version: 1
+      timestamp: 2026-07-28T21:35:02.350893+08:00
+    - id: evt-1785245702352135000
+      type: behavior.executed
+      object: adaptive-v3
+      action: initialize
+      version: 1
+      timestamp: 2026-07-28T21:35:02.352135+08:00
+    - id: evt-1785245707975675000
+      type: task.failed
+      object: adaptive-v3
+      action: retry
+      version: 1
+      timestamp: 2026-07-28T21:35:07.97568+08:00
+    - id: evt-1785246092511896000
+      type: object.created
+      object: adaptive-v4
+      action: create
+      version: 1
+      timestamp: 2026-07-28T21:41:32.511903+08:00
+    - id: evt-1785246092512590000
+      type: behavior.executed
+      object: adaptive-v4
+      action: initialize
+      version: 1
+      timestamp: 2026-07-28T21:41:32.512591+08:00
+    - id: evt-1785246098728364000
+      type: task.failed
+      object: adaptive-v4
+      action: retry
+      version: 1
+      timestamp: 2026-07-28T21:41:38.728368+08:00
+    - id: evt-1785246415823940000
+      type: object.created
+      object: adaptive-final
+      action: create
+      version: 1
+      timestamp: 2026-07-28T21:46:55.823946+08:00
+    - id: evt-1785246415824744000
+      type: behavior.executed
+      object: adaptive-final
+      action: initialize
+      version: 1
+      timestamp: 2026-07-28T21:46:55.824745+08:00
+    - id: evt-1785246422070272000
+      type: task.failed
+      object: adaptive-final
+      action: retry
+      version: 1
+      timestamp: 2026-07-28T21:47:02.070276+08:00
+    - id: evt-1785246735215088000
+      type: object.created
+      object: adaptive-v6
+      action: create
+      version: 1
+      timestamp: 2026-07-28T21:52:15.215096+08:00
+    - id: evt-1785246735216072000
+      type: behavior.executed
+      object: adaptive-v6
+      action: initialize
+      version: 1
+      timestamp: 2026-07-28T21:52:15.216074+08:00
+    - id: evt-1785246742377957000
+      type: task.failed
+      object: adaptive-v6
+      action: retry
+      version: 1
+      timestamp: 2026-07-28T21:52:22.37796+08:00
+    - id: evt-1785246875787526000
+      type: object.created
+      object: adaptive-v7
+      action: create
+      version: 1
+      timestamp: 2026-07-28T21:54:35.787531+08:00
+    - id: evt-1785246875788891000
+      type: behavior.executed
+      object: adaptive-v7
+      action: initialize
+      version: 1
+      timestamp: 2026-07-28T21:54:35.788893+08:00
+    - id: evt-1785246919265116000
+      type: task.failed
+      object: adaptive-v7
+      action: retry
+      version: 1
+      timestamp: 2026-07-28T21:55:19.265125+08:00
+    - id: evt-1785301911462540000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T13:11:51.462545+08:00
+    - id: evt-1785302737066708000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T13:25:37.066714+08:00
+    - id: evt-1785303180691483000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T13:33:00.691589+08:00
+    - id: evt-1785303376761140000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T13:36:16.761155+08:00
+    - id: evt-1785305254126531000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T14:07:34.126612+08:00
+    - id: evt-1785305695180335000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T14:14:55.180347+08:00
+    - id: evt-1785305889292341000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T14:18:09.292348+08:00
+    - id: evt-1785306631342028000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T14:30:31.342115+08:00
+    - id: evt-1785306739693662000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T14:32:19.693673+08:00
+    - id: evt-1785307954784649000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T14:52:34.784654+08:00
+    - id: evt-1785308813211439000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T15:06:53.211457+08:00
+    - id: evt-1785310707208294000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T15:38:27.208301+08:00
+    - id: evt-1785312173278108000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T16:02:53.2782+08:00
+    - id: evt-1785313086636616000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T16:18:06.636627+08:00
+    - id: evt-1785313613266993000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T16:26:53.267+08:00
+    - id: evt-1785314050416801000
+      type: task.completed
+      object: adaptive-v7
+      action: retry
+      data: retry_strategy
+      version: 1
+      timestamp: 2026-07-29T16:34:10.416878+08:00

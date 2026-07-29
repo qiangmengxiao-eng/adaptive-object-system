@@ -1,50 +1,48 @@
 package repository
 
-import (
-	"testing"
+import "testing"
 
-	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/memory"
-)
+func TestRuntimeEngine(t *testing.T) {
 
-func TestLoadObject(t *testing.T) {
-	fs := memory.New()
+	engine :=
+		NewRuntimeEngine(
+			nil,
+		)
 
-	repo := New(fs)
+	object :=
+		engine.Start(
+			ObjectDefinition{
+				Name: "user",
 
-	err := repo.CreateObject(
-		"user",
-		[]byte(`
-name: user
-type: entity
-`),
-	)
+				Type: "object",
 
-	if err != nil {
-		t.Fatal(err)
+				ID: "user",
+			},
+		)
+
+	if object.Name != "user" {
+
+		t.Fatal(
+			"runtime object failed",
+		)
 	}
 
-	err = repo.WriteObjectMetadata(
-		"user",
-		&ObjectMetadata{
-			Version: 1,
-		},
-	)
+	found, ok :=
+		engine.Get(
+			"user",
+		)
 
-	if err != nil {
-		t.Fatal(err)
+	if !ok {
+
+		t.Fatal(
+			"object missing",
+		)
 	}
 
-	object, err := repo.LoadObject("user")
+	if found.State.Status != "created" {
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if object.Definition.Name != "user" {
-		t.Fatal("invalid definition")
-	}
-
-	if object.Metadata.Version != 1 {
-		t.Fatal("invalid metadata")
+		t.Fatal(
+			"invalid state",
+		)
 	}
 }

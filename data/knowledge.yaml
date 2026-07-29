@@ -1,0 +1,17 @@
+knowledge:
+    - object: adaptive-v7
+      strategy: retry_strategy
+      success_rate: 0.9411764705882353
+      confidence: 0.9411764705882353
+      preferred: true
+      global: false
+      version: 1
+      created_at: 2026-07-29T16:34:10.422627+08:00
+    - object: ""
+      strategy: retry_strategy
+      success_rate: 0.9411764705882353
+      confidence: 0.9411764705882353
+      preferred: true
+      global: true
+      version: 2
+      created_at: 2026-07-29T16:34:10.425552+08:00

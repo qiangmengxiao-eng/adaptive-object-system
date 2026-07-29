@@ -6,7 +6,15 @@ type ObjectSystem struct {
 
 	Registry *Registry
 
+	ObjectViewService *ObjectViewService
+
+	Lifecycle *LifecycleEngine
+
 	Graph *ObjectGraph
+
+	GraphStore *GraphStore
+
+	GraphService *GraphService
 
 	Behavior *BehaviorEngine
 
@@ -16,16 +24,74 @@ type ObjectSystem struct {
 
 	MigrationService *MigrationService
 
-	GraphStore *GraphStore
-
-	GraphService *GraphService
-
 	EventStore *EventStore
 
 	EventService *EventService
+
+	EventBus *EventBus
+
+	Runtime *RuntimeEngine
+
+	RuntimeStore *RuntimeStore
+
+	RuleEngine *RuleEngine
+
+	RuleService *RuleService
+
+	AuditStore *AuditStore
+
+	StatusService *StatusService
+
+	QueryService *QueryService
+
+	// Adaptive Intelligence
+
+	ObservationStore *ObservationStore
+
+	ExperienceEngine *ExperienceEngine
+
+	Decision *DecisionEngine
+
+	Adaptation *AdaptationEngine
+
+	Goal *GoalEngine
+
+	Intent *IntentEngine
+
+	Plan *PlanEngine
+
+	Task *TaskEngine
+
+	Planner *PlannerEngine
+
+	AutoExecutor *AutoExecutor
+
+	ExecutionStore *ExecutionStore
+
+	ReflectionStore *ReflectionStore
+
+	Reflection *ReflectionEngine
+
+	KnowledgeStore *KnowledgeStore
+
+	Knowledge *KnowledgeEngine
+
+	// Phase 4
+
+	Collaboration *CollaborationEngine
+
+	CollaborationStore *CollaborationStore
+
+	LifecycleManager *LifecycleManager
+
+	Policy *PolicyEngine
+
+	Metrics *MetricsEngine
+
+	Optimization *OptimizationEngine
 }
 
-// NewObjectSystem creates an object system.
+// NewObjectSystem creates object system.
 func NewObjectSystem(
 	repo *Repository,
 ) *ObjectSystem {
@@ -33,13 +99,23 @@ func NewObjectSystem(
 	behavior :=
 		NewBehaviorEngine()
 
-	migration :=
-		NewMigrationEngine()
-
 	behaviorService :=
 		NewBehaviorService(
 			behavior,
 		)
+
+	_ =
+		behavior.Register(
+			ObjectBehavior{
+
+				Name: "initialize",
+
+				Action: "activate",
+			},
+		)
+
+	migration :=
+		NewMigrationEngine()
 
 	migrationService :=
 		NewMigrationService(
@@ -66,30 +142,343 @@ func NewObjectSystem(
 			eventStore,
 		)
 
-	return &ObjectSystem{
+	eventBus :=
+		NewEventBus()
 
-		Repository: repo,
+	runtimeStore :=
+		NewRuntimeStore(
+			repo.FS(),
+		)
 
-		Registry: NewRegistry(
+	runtime :=
+		NewRuntimeEngine(
+			runtimeStore,
+		)
+
+	ruleEngine :=
+		NewRuleEngine()
+
+	ruleService :=
+		NewRuleService(
+			ruleEngine,
+			behavior,
+		)
+
+	lifecycleStore :=
+		NewLifecycleRuleStore(
+			repo.FS(),
+		)
+
+	lifecycle :=
+		NewLifecycleEngine(
+			lifecycleStore,
+		)
+
+	auditStore :=
+		NewAuditStore(
+			repo.FS(),
+		)
+
+	// Adaptive Memory
+
+	observationStore :=
+		NewObservationStore(
+			repo.FS(),
+		)
+
+	reflectionStore :=
+		NewReflectionStore(
+			repo.FS(),
+		)
+
+	experienceEngine :=
+		NewExperienceEngine(
+			observationStore,
+		)
+	reflection :=
+		NewReflectionEngine(
+			experienceEngine,
+			reflectionStore,
+		)
+
+	knowledgeStore :=
+		NewKnowledgeStore(
+			repo.FS(),
+		)
+
+	knowledge :=
+		NewKnowledgeEngine(
+			experienceEngine,
+			knowledgeStore,
+		)
+
+	// Decision Engine
+
+	decision :=
+		NewDecisionEngine(
+			experienceEngine,
+		)
+
+	decision.AttachReflection(
+		reflection,
+	)
+
+	decision.AttachKnowledge(
+		knowledge,
+	)
+
+	adaptation :=
+		NewAdaptationEngine(
+			experienceEngine,
+			behavior,
+		)
+
+	adaptation.AttachKnowledge(
+		knowledge,
+	)
+
+	goal :=
+		NewGoalEngine()
+
+	intent :=
+		NewIntentEngine()
+
+	plan :=
+		NewPlanEngine()
+
+	task :=
+		NewTaskEngine()
+
+	planner :=
+		NewPlannerEngine()
+
+	executionStore :=
+		NewExecutionStore(
+			repo.FS(),
+		)
+
+	autoExecutor :=
+		NewAutoExecutor(
+			task,
+			executionStore,
+		)
+
+	autoExecutor.Load()
+
+	// Phase 4 Autonomous Layer
+
+	collaborationStore :=
+		NewCollaborationStore(
+			repo.FS(),
+		)
+
+	collaboration :=
+		NewCollaborationEngine(
+			collaborationStore,
+		)
+
+	lifecycleManager :=
+		NewLifecycleManager(
+			experienceEngine,
+		)
+
+	policy :=
+		NewPolicyEngine()
+
+	optimization :=
+		NewOptimizationEngine(
+			decision,
+		)
+	_ =
+		ruleEngine.Register(
+			ObjectRule{
+
+				Name: "initialize-object",
+
+				Event: "object.created",
+
+				Action: "initialize",
+			},
+		)
+
+	system :=
+		&ObjectSystem{
+
+			Repository: repo,
+
+			Adaptation: adaptation,
+
+			Goal: goal,
+
+			Intent: intent,
+
+			Plan: plan,
+
+			Task: task,
+
+			Planner: planner,
+
+			AutoExecutor: autoExecutor,
+
+			ExecutionStore: executionStore,
+
+			ObservationStore: observationStore,
+
+			ExperienceEngine: experienceEngine,
+
+			Decision: decision,
+
+			ReflectionStore: reflectionStore,
+
+			Reflection: reflection,
+
+			KnowledgeStore: knowledgeStore,
+
+			Knowledge: knowledge,
+
+			// Phase 4
+
+			CollaborationStore: collaborationStore,
+
+			Collaboration: collaboration,
+
+			LifecycleManager: lifecycleManager,
+
+			Policy: policy,
+
+			Optimization: optimization,
+
+			Lifecycle: lifecycle,
+
+			Graph: NewObjectGraph(),
+
+			GraphStore: graphStore,
+
+			GraphService: graphService,
+
+			Behavior: behavior,
+
+			BehaviorService: behaviorService,
+
+			MigrationEngine: migration,
+
+			MigrationService: migrationService,
+
+			EventStore: eventStore,
+
+			EventService: eventService,
+
+			EventBus: eventBus,
+
+			Runtime: runtime,
+
+			RuntimeStore: runtimeStore,
+
+			RuleEngine: ruleEngine,
+
+			RuleService: ruleService,
+
+			AuditStore: auditStore,
+		}
+
+	system.Registry =
+		NewRegistry(
 			repo,
-		),
+		)
 
-		Graph: NewObjectGraph(),
+	system.Metrics =
+		NewMetricsEngine(
+			system.Registry,
+			system.KnowledgeStore,
+		)
 
-		Behavior: behavior,
+	system.ObjectViewService =
+		NewObjectViewService(
+			system,
+		)
 
-		BehaviorService: behaviorService,
+	system.StatusService =
+		NewStatusService(
+			system,
+		)
 
-		MigrationEngine: migration,
+	system.QueryService =
+		NewQueryService(
+			system.Registry,
+		)
 
-		MigrationService: migrationService,
+	// Event pipeline
 
-		GraphStore: graphStore,
+	eventBus.Subscribe(
+		func(
+			event ObjectEvent,
+		) error {
 
-		GraphService: graphService,
+			_ =
+				eventService.Emit(
+					event,
+				)
 
-		EventStore: eventStore,
+			rules :=
+				ruleService.Handle(
+					event,
+				)
 
-		EventService: eventService,
-	}
+			for _, rule := range rules {
+
+				if rule.Action !=
+					"initialize" {
+
+					continue
+				}
+
+				_ =
+					behaviorService.Execute(
+						rule.Action,
+						event.Object,
+					)
+
+				if object, ok :=
+					runtime.Get(
+						event.Object,
+					); ok {
+
+					object.State.Status =
+						"active"
+
+					executedEvent :=
+						NewObjectEvent(
+							"behavior.executed",
+							event.Object,
+							"initialize",
+							"",
+						)
+
+					_ =
+						runtime.AddEvent(
+							event.Object,
+							executedEvent,
+						)
+
+					_ =
+						eventService.Emit(
+							executedEvent,
+						)
+
+					_ =
+						auditStore.Append(
+							NewAuditRecord(
+								"behavior.initialize",
+								event.Object,
+								"success",
+							),
+						)
+				}
+			}
+
+			return nil
+		},
+	)
+
+	return system
 }

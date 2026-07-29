@@ -1,29 +1,29 @@
 package repository
 
-import "fmt"
-
 // BehaviorEngine executes object behaviors.
 type BehaviorEngine struct {
 	behaviors map[string]ObjectBehavior
 }
 
-// NewBehaviorEngine creates a behavior engine.
+// NewBehaviorEngine creates behavior engine.
 func NewBehaviorEngine() *BehaviorEngine {
-	engine := &BehaviorEngine{
-		behaviors: make(map[string]ObjectBehavior),
+
+	return &BehaviorEngine{
+
+		behaviors: make(
+			map[string]ObjectBehavior,
+		),
 	}
-
-	_ = engine.Register(ObjectBehavior{
-		Name:   "default",
-		Action: "noop",
-	})
-
-	return engine
 }
 
-// Register registers a behavior.
-func (e *BehaviorEngine) Register(behavior ObjectBehavior) error {
-	if err := behavior.Validate(); err != nil {
+// Register registers behavior.
+func (e *BehaviorEngine) Register(
+	behavior ObjectBehavior,
+) error {
+
+	if err :=
+		behavior.Validate(); err != nil {
+
 		return err
 	}
 
@@ -32,20 +32,60 @@ func (e *BehaviorEngine) Register(behavior ObjectBehavior) error {
 	return nil
 }
 
-// Get returns a behavior.
-func (e *BehaviorEngine) Get(name string) (ObjectBehavior, bool) {
-	behavior, ok := e.behaviors[name]
+// Get returns behavior.
+func (e *BehaviorEngine) Get(
+	name string,
+) (
+	ObjectBehavior,
+	bool,
+) {
+
+	behavior, ok :=
+		e.behaviors[name]
 
 	return behavior, ok
 }
 
-// Run executes a behavior.
-func (e *BehaviorEngine) Run(name string) error {
-	_, ok := e.Get(name)
+// Execute executes behavior.
+func (e *BehaviorEngine) Execute(
+	name string,
+	object string,
+) error {
+
+	behavior, ok :=
+		e.Get(
+			name,
+		)
 
 	if !ok {
-		return fmt.Errorf("behavior not found: %s", name)
+
+		return nil
 	}
 
+	_ = behavior
+
+	_ = object
+
 	return nil
+}
+
+// List returns behaviors.
+func (e *BehaviorEngine) List() []ObjectBehavior {
+
+	result :=
+		make(
+			[]ObjectBehavior,
+			0,
+		)
+
+	for _, behavior := range e.behaviors {
+
+		result =
+			append(
+				result,
+				behavior,
+			)
+	}
+
+	return result
 }

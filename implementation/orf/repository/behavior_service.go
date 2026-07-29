@@ -1,29 +1,39 @@
 package repository
 
-// BehaviorService provides behavior operations.
+// BehaviorService manages behavior execution.
 type BehaviorService struct {
 	engine *BehaviorEngine
 }
 
-// NewBehaviorService creates behavior service.
-func NewBehaviorService(engine *BehaviorEngine) *BehaviorService {
+// NewBehaviorService creates service.
+func NewBehaviorService(
+	engine *BehaviorEngine,
+) *BehaviorService {
+
 	return &BehaviorService{
+
 		engine: engine,
 	}
 }
 
-// List returns available behaviors.
-func (s *BehaviorService) List() []string {
-	result := make([]string, 0)
+// Execute executes behavior.
+func (s *BehaviorService) Execute(
+	name string,
+	object string,
+) error {
 
-	for name := range s.engine.behaviors {
-		result = append(result, name)
-	}
-
-	return result
+	return s.engine.Execute(
+		name,
+		object,
+	)
 }
 
-// Run executes behavior.
-func (s *BehaviorService) Run(name string, input any) error {
-	return s.engine.Run(name)
+// Register registers behavior.
+func (s *BehaviorService) Register(
+	behavior ObjectBehavior,
+) error {
+
+	return s.engine.Register(
+		behavior,
+	)
 }

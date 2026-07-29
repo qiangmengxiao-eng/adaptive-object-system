@@ -1,0 +1,15 @@
+reflections:
+    - object: adaptive-v7
+      events: 11
+      success: 10
+      failure: 1
+      success_rate: 0.9090909090909091
+      assessment: performance acceptable
+      created_at: 2026-07-29T14:52:34.788093+08:00
+    - object: adaptive-v7
+      events: 12
+      success: 11
+      failure: 1
+      success_rate: 0.9166666666666666
+      assessment: performance acceptable
+      created_at: 2026-07-29T15:06:53.216566+08:00
