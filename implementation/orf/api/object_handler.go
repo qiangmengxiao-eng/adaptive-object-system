@@ -150,6 +150,36 @@ func (s *Server) handleObject(
 	r *http.Request,
 ) {
 
+	// Phase 9.5 Growth Feedback Loop
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/growth-feedback",
+	) {
+
+		s.handleGrowthFeedback(
+			w,
+			r,
+		)
+
+		return
+	}
+
+	// Phase 9 Growth Intelligence
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/growth-analysis",
+	) {
+
+		s.handleGrowthAnalysis(
+			w,
+			r,
+		)
+
+		return
+	}
+
 	// Phase 8 Seller Intelligence
 
 	if strings.HasSuffix(

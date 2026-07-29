@@ -98,6 +98,20 @@ type ObjectSystem struct {
 
 	SellerIntelligence *SellerIntelligence
 
+	CompetitorEngine *CompetitorEngine
+
+	SEOEngine *SEOEngine
+
+	PPCEngine *PPCEngine
+
+	GrowthEngine *GrowthEngine
+
+	PerformanceEngine *PerformanceEngine
+
+	PerformanceReflection *PerformanceReflectionEngine
+
+	GrowthLearning *GrowthLearningEngine
+
 	// Phase 4
 
 	Collaboration *CollaborationEngine
@@ -286,6 +300,33 @@ func NewObjectSystem(
 			amazonAgent,
 		)
 
+	competitor :=
+		NewCompetitorEngine()
+
+	seo :=
+		NewSEOEngine()
+
+	ppc :=
+		NewPPCEngine()
+
+	growth :=
+		NewGrowthEngine(
+			competitor,
+			seo,
+			ppc,
+		)
+
+	performance :=
+		NewPerformanceEngine()
+
+	performanceReflection :=
+		NewPerformanceReflectionEngine()
+
+	learning :=
+		NewGrowthLearningEngine(
+			performanceReflection,
+		)
+
 	// Decision Engine
 
 	decision :=
@@ -431,6 +472,20 @@ func NewObjectSystem(
 			MarketStrategy: marketStrategy,
 
 			SellerIntelligence: sellerIntelligence,
+
+			CompetitorEngine: competitor,
+
+			SEOEngine: seo,
+
+			PPCEngine: ppc,
+
+			GrowthEngine: growth,
+
+			PerformanceEngine: performance,
+
+			PerformanceReflection: performanceReflection,
+
+			GrowthLearning: learning,
 
 			// Phase 4
 
