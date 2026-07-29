@@ -389,7 +389,9 @@ func NewObjectSystem(
 	system.Metrics =
 		NewMetricsEngine(
 			system.Registry,
+			system.ExecutionStore,
 			system.KnowledgeStore,
+			system.ObservationStore,
 		)
 
 	system.ObjectViewService =
