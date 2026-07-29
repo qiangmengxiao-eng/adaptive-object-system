@@ -80,6 +80,12 @@ type ObjectSystem struct {
 
 	Listing *ListingEngine
 
+	ListingQuality *ListingQualityEngine
+
+	ListingQualityStore *ListingQualityStore
+
+	ListingOptimizer *ListingOptimizer
+
 	// Phase 4
 
 	Collaboration *CollaborationEngine
@@ -226,6 +232,21 @@ func NewObjectSystem(
 			listingStore,
 		)
 
+	listingQualityStore :=
+		NewListingQualityStore(
+			repo.FS(),
+		)
+
+	listingQuality :=
+		NewListingQualityEngine()
+
+	listingOptimizer :=
+		NewListingOptimizer(
+			listing,
+			listingQuality,
+			knowledge,
+		)
+
 	// Decision Engine
 
 	decision :=
@@ -353,6 +374,12 @@ func NewObjectSystem(
 			ListingStore: listingStore,
 
 			Listing: listing,
+
+			ListingQualityStore: listingQualityStore,
+
+			ListingQuality: listingQuality,
+
+			ListingOptimizer: listingOptimizer,
 
 			// Phase 4
 

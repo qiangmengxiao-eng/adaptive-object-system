@@ -164,6 +164,32 @@ func (s *Server) handleObject(
 		return
 	}
 
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/listing/quality",
+	) {
+
+		s.handleListingQuality(
+			w,
+			r,
+		)
+
+		return
+	}
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/listing/optimize",
+	) {
+
+		s.handleListingOptimize(
+			w,
+			r,
+		)
+
+		return
+	}
+
 	name :=
 		strings.TrimPrefix(
 			r.URL.Path,
