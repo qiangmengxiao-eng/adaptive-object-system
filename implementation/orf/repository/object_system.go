@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository/autonomy"
 	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository/decision"
 	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository/execution"
 	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository/planning"
@@ -86,6 +87,8 @@ type ObjectSystem struct {
 	Reflection *ReflectionEngine
 
 	ReflectionV2 *reflectionpkg.ReflectionEngine
+
+	Autonomous *autonomy.AutonomousEngine
 
 	KnowledgeStore *KnowledgeStore
 
@@ -271,6 +274,24 @@ func NewObjectSystem(
 	reflectionV2 :=
 		reflectionpkg.NewReflectionEngine()
 
+	planningEngine :=
+		planning.NewPlanningEngine()
+
+	executionEngine :=
+		execution.NewExecutionEngine()
+
+	autonomous :=
+		autonomy.NewAutonomousEngine(
+
+			decisionEngine,
+
+			planningEngine,
+
+			executionEngine,
+
+			reflectionV2,
+		)
+
 	knowledgeStore :=
 		NewKnowledgeStore(
 			repo.FS(),
@@ -394,12 +415,6 @@ func NewObjectSystem(
 			experienceEngine,
 		)
 
-	planningEngine :=
-		planning.NewPlanningEngine()
-
-	executionEngine :=
-		execution.NewExecutionEngine()
-
 	decision.AttachReflection(
 		reflection,
 	)
@@ -520,6 +535,8 @@ func NewObjectSystem(
 			Reflection: reflection,
 
 			ReflectionV2: reflectionV2,
+
+			Autonomous: autonomous,
 
 			KnowledgeStore: knowledgeStore,
 
