@@ -122,6 +122,8 @@ type ObjectSystem struct {
 
 	ProductOpportunity *ProductOpportunityEngine
 
+	ProductStrategy *ProductStrategyEngine
+
 	// Phase 4
 
 	Collaboration *CollaborationEngine
@@ -360,6 +362,9 @@ func NewObjectSystem(
 			market,
 		)
 
+	productStrategy :=
+		NewProductStrategyEngine()
+
 	// Decision Engine
 
 	decision :=
@@ -529,6 +534,8 @@ func NewObjectSystem(
 			Market: market,
 
 			ProductOpportunity: productOpportunity,
+
+			ProductStrategy: productStrategy,
 
 			// Phase 4
 

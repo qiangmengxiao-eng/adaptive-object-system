@@ -1,0 +1,40 @@
+name: product-strategy
+
+description: |
+  Generate product launch strategy based on
+  market opportunity, competition and profit.
+
+input:
+  product:
+    type: string
+
+  market_score:
+    type: number
+
+  competition:
+    type: string
+
+  margin:
+    type: number
+
+output:
+  decision:
+    type: string
+
+  positioning:
+    type: string
+
+  target_price:
+    type: number
+
+  core_features:
+    type: array
+
+  keyword_strategy:
+    type: string
+
+  marketing_strategy:
+    type: string
+
+  risk:
+    type: string

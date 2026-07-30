@@ -150,6 +150,21 @@ func (s *Server) handleObject(
 	r *http.Request,
 ) {
 
+	// Phase 11 Product Strategy
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/product-strategy",
+	) {
+
+		s.handleProductStrategy(
+			w,
+			r,
+		)
+
+		return
+	}
+
 	// Phase 11 Competitor Intelligence
 
 	if strings.HasSuffix(
