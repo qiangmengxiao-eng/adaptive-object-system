@@ -1,5 +1,9 @@
 package repository
 
+import (
+	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository/decision"
+)
+
 // ObjectSystem is the main entry of AOS.
 type ObjectSystem struct {
 	Repository *Repository
@@ -49,6 +53,8 @@ type ObjectSystem struct {
 	ObservationStore *ObservationStore
 
 	ExperienceEngine *ExperienceEngine
+
+	DecisionEngine *decision.DecisionEngine
 
 	Decision *DecisionEngine
 
@@ -243,6 +249,10 @@ func NewObjectSystem(
 		NewExperienceEngine(
 			observationStore,
 		)
+
+	decisionEngine :=
+		decision.NewDecisionEngine()
+
 	reflection :=
 		NewReflectionEngine(
 			experienceEngine,
@@ -478,6 +488,8 @@ func NewObjectSystem(
 			ObservationStore: observationStore,
 
 			ExperienceEngine: experienceEngine,
+
+			DecisionEngine: decisionEngine,
 
 			Decision: decision,
 
