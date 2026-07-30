@@ -150,6 +150,36 @@ func (s *Server) handleObject(
 	r *http.Request,
 ) {
 
+	// Phase 10 Knowledge Learning
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/knowledge/learn",
+	) {
+
+		s.handleKnowledgeLearn(
+			w,
+			r,
+		)
+
+		return
+	}
+
+	// Phase 10 Knowledge Recommendation
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/knowledge/recommend",
+	) {
+
+		s.handleKnowledgeRecommend(
+			w,
+			r,
+		)
+
+		return
+	}
+
 	// Phase 9.5 Growth Feedback Loop
 
 	if strings.HasSuffix(

@@ -112,6 +112,12 @@ type ObjectSystem struct {
 
 	GrowthLearning *GrowthLearningEngine
 
+	StrategyKnowledgeStore *StrategyKnowledgeStore
+
+	StrategyRecommender *StrategyRecommender
+
+	KnowledgeLearning *KnowledgeLearningEngine
+
 	// Phase 4
 
 	Collaboration *CollaborationEngine
@@ -316,6 +322,21 @@ func NewObjectSystem(
 			ppc,
 		)
 
+	strategyKnowledgeStore :=
+		NewStrategyKnowledgeStore(
+			repo.FS(),
+		)
+
+	strategyRecommender :=
+		NewStrategyRecommender(
+			strategyKnowledgeStore,
+		)
+
+	knowledgeLearning :=
+		NewKnowledgeLearningEngine(
+			strategyKnowledgeStore,
+		)
+
 	performance :=
 		NewPerformanceEngine()
 
@@ -486,6 +507,12 @@ func NewObjectSystem(
 			PerformanceReflection: performanceReflection,
 
 			GrowthLearning: learning,
+
+			StrategyKnowledgeStore: strategyKnowledgeStore,
+
+			StrategyRecommender: strategyRecommender,
+
+			KnowledgeLearning: knowledgeLearning,
 
 			// Phase 4
 
