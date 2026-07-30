@@ -20,6 +20,16 @@ type CompetitorAnalysis struct {
 	Opportunity string `json:"opportunity"`
 
 	Gap string `json:"gap"`
+
+	AveragePrice float64 `json:"average_price"`
+
+	AverageRating float64 `json:"average_rating"`
+
+	AverageReviews float64 `json:"average_reviews"`
+
+	Differentiation string `json:"differentiation"`
+
+	Strategy string `json:"strategy"`
 }
 
 type CompetitorEngine struct{}
@@ -34,10 +44,40 @@ func (c *CompetitorEngine) Analyze(
 	competitors []Competitor,
 ) CompetitorAnalysis {
 
+	averagePrice := 0.0
+
+	averageRating := 0.0
+
+	averageReviews := 0.0
+
+	for _, item := range competitors {
+
+		averagePrice += item.Price
+
+		averageRating += item.Rating
+
+		averageReviews += float64(item.Reviews)
+	}
+
+	if len(competitors) > 0 {
+
+		count :=
+			float64(len(competitors))
+
+		averagePrice =
+			averagePrice / count
+
+		averageRating =
+			averageRating / count
+
+		averageReviews =
+			averageReviews / count
+	}
+
 	level :=
 		"low"
 
-	if len(competitors) > 5 {
+	if len(competitors) >= 5 {
 
 		level =
 			"high"
@@ -49,6 +89,12 @@ func (c *CompetitorEngine) Analyze(
 	gap :=
 		"unknown"
 
+	differentiation :=
+		"improve features and value"
+
+	strategy :=
+		"differentiate product"
+
 	if len(competitors) > 0 {
 
 		gap =
@@ -56,6 +102,22 @@ func (c *CompetitorEngine) Analyze(
 
 		opportunity =
 			"improve positioning"
+
+		if averageRating >= 4.5 &&
+			averageReviews > 1000 {
+
+			level =
+				"high"
+
+			gap =
+				"strong competitors"
+
+			differentiation =
+				"better features and customer value"
+
+			strategy =
+				"enter with differentiated product"
+		}
 	}
 
 	return CompetitorAnalysis{
@@ -67,5 +129,15 @@ func (c *CompetitorEngine) Analyze(
 		Opportunity: opportunity,
 
 		Gap: gap,
+
+		AveragePrice: averagePrice,
+
+		AverageRating: averageRating,
+
+		AverageReviews: averageReviews,
+
+		Differentiation: differentiation,
+
+		Strategy: strategy,
 	}
 }

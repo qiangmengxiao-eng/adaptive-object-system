@@ -150,6 +150,36 @@ func (s *Server) handleObject(
 	r *http.Request,
 ) {
 
+	// Phase 11 Competitor Intelligence
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/competitor-analysis",
+	) {
+
+		s.handleCompetitorAnalysis(
+			w,
+			r,
+		)
+
+		return
+	}
+
+	// Phase 11 Market Intelligence
+
+	if strings.HasSuffix(
+		r.URL.Path,
+		"/market-analysis",
+	) {
+
+		s.handleMarketAnalysis(
+			w,
+			r,
+		)
+
+		return
+	}
+
 	// Phase 10 Knowledge Learning
 
 	if strings.HasSuffix(

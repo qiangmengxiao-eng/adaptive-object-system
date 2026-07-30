@@ -118,6 +118,10 @@ type ObjectSystem struct {
 
 	KnowledgeLearning *KnowledgeLearningEngine
 
+	Market *MarketEngine
+
+	ProductOpportunity *ProductOpportunityEngine
+
 	// Phase 4
 
 	Collaboration *CollaborationEngine
@@ -348,6 +352,14 @@ func NewObjectSystem(
 			performanceReflection,
 		)
 
+	market :=
+		NewMarketEngine()
+
+	productOpportunity :=
+		NewProductOpportunityEngine(
+			market,
+		)
+
 	// Decision Engine
 
 	decision :=
@@ -514,9 +526,11 @@ func NewObjectSystem(
 
 			KnowledgeLearning: knowledgeLearning,
 
-			// Phase 4
+			Market: market,
 
-			CollaborationStore: collaborationStore,
+			ProductOpportunity: productOpportunity,
+
+			// Phase 4
 
 			Collaboration: collaboration,
 
