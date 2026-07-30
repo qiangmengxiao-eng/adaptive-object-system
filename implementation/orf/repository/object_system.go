@@ -2,6 +2,9 @@ package repository
 
 import (
 	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository/decision"
+	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository/execution"
+	"github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository/planning"
+	reflectionpkg "github.com/qiangmengxiao-eng/adaptive-object-system/implementation/orf/repository/reflection"
 )
 
 // ObjectSystem is the main entry of AOS.
@@ -58,6 +61,10 @@ type ObjectSystem struct {
 
 	Decision *DecisionEngine
 
+	PlanningEngine *planning.PlanningEngine
+
+	ExecutionEngine *execution.ExecutionEngine
+
 	Adaptation *AdaptationEngine
 
 	Goal *GoalEngine
@@ -77,6 +84,8 @@ type ObjectSystem struct {
 	ReflectionStore *ReflectionStore
 
 	Reflection *ReflectionEngine
+
+	ReflectionV2 *reflectionpkg.ReflectionEngine
 
 	KnowledgeStore *KnowledgeStore
 
@@ -259,6 +268,9 @@ func NewObjectSystem(
 			reflectionStore,
 		)
 
+	reflectionV2 :=
+		reflectionpkg.NewReflectionEngine()
+
 	knowledgeStore :=
 		NewKnowledgeStore(
 			repo.FS(),
@@ -382,6 +394,12 @@ func NewObjectSystem(
 			experienceEngine,
 		)
 
+	planningEngine :=
+		planning.NewPlanningEngine()
+
+	executionEngine :=
+		execution.NewExecutionEngine()
+
 	decision.AttachReflection(
 		reflection,
 	)
@@ -493,9 +511,15 @@ func NewObjectSystem(
 
 			Decision: decision,
 
+			PlanningEngine: planningEngine,
+
+			ExecutionEngine: executionEngine,
+
 			ReflectionStore: reflectionStore,
 
 			Reflection: reflection,
+
+			ReflectionV2: reflectionV2,
 
 			KnowledgeStore: knowledgeStore,
 
